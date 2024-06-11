@@ -1,0 +1,64 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+# dependencies
+**/front-end/node_modules/**
+**/front-end/static/**
+/front-end/.pnp
+/front-end/.pnp.js
+
+# testing
+/front-end/coverage
+
+# production
+/front-end/build
+
+# misc
+/front-end/.DS_Store
+/front-end/.env.local
+/front-end/.env.development.local
+/front-end/.env.test.local
+/front-end/.env.production.local
+
+/front-end/npm-debug.log*
+/front-end/yarn-debug.log*
+/front-end/yarn-error.log*
+
+src/main/resources/static/**
+
+.env
