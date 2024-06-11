@@ -7,4 +7,3 @@
 
 플랫폼입니다.
 
-<div align="center">
