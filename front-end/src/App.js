@@ -1,5 +1,5 @@
-import './App.css';
 import {RecoilRoot} from "recoil";
+import View from "./View"
 
 function App() {
   return (
