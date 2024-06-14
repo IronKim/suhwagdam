@@ -2,8 +2,7 @@ package com.newdeal.suhwagdam.dto;
 
 import com.newdeal.suhwagdam.domain.UserAccount;
 import com.newdeal.suhwagdam.domain.constant.RoleType;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,16 +12,16 @@ import java.util.Collection;
 import java.util.List;
 
 @Getter
+@Setter
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class UserAccountDto implements UserDetails {
     private Long seq;
     private String accountId;
     private String password;
-    private String name;
+    private String email;
     private String nickname;
-    private String phoneNumber;
-    private String address;
-    private String detailedAddress;
     private Double creditScore;
     private RoleType roleType;
     private LocalDateTime createdAt;
@@ -36,11 +35,8 @@ public class UserAccountDto implements UserDetails {
                 userAccount.getSeq(),
                 userAccount.getAccountId(),
                 userAccount.getPassword(),
-                userAccount.getName(),
+                userAccount.getEmail(),
                 userAccount.getNickname(),
-                userAccount.getPhoneNumber(),
-                userAccount.getAddress(),
-                userAccount.getDetailedAddress(),
                 userAccount.getCreditScore(),
                 userAccount.getRoleType(),
                 userAccount.getCreatedAt(),

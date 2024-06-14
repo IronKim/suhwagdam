@@ -1,6 +1,7 @@
 package com.newdeal.suhwagdam.domain;
 
 import com.newdeal.suhwagdam.domain.constant.RoleType;
+import com.newdeal.suhwagdam.dto.UserAccountDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -26,24 +27,27 @@ public class UserAccount extends AuditingFields {
     @Column(nullable = false, length = 200)
     private String password;
 
-    @Column(nullable = false, length = 50)
-    private String name;
+    @Column(nullable = false, length = 100, unique = true)
+    private String email;
 
     @Column(nullable = false, length = 50)
     private String nickname;
-
-    @Column(nullable = false, length = 20)
-    private String phoneNumber;
-
-    @Column(nullable = false)
-    private String address;
-
-    @Column(nullable = false)
-    private String detailedAddress;
 
     private Double creditScore;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoleType roleType;
+
+    public static UserAccount toEntity(UserAccountDto userAccountDto) {
+        return UserAccount.builder()
+                .seq(userAccountDto.getSeq())
+                .accountId(userAccountDto.getAccountId())
+                .password(userAccountDto.getPassword())
+                .email(userAccountDto.getEmail())
+                .nickname(userAccountDto.getNickname())
+                .creditScore(userAccountDto.getCreditScore())
+                .roleType(userAccountDto.getRoleType())
+                .build();
+    }
 }
