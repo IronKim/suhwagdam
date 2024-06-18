@@ -1,45 +1,49 @@
 package com.newdeal.suhwagdam.dto;
 
+import com.newdeal.suhwagdam.domain.Category;
 import com.newdeal.suhwagdam.domain.Goods;
+import com.newdeal.suhwagdam.domain.GoodsImage;
 import com.newdeal.suhwagdam.domain.UserAccount;
+import com.newdeal.suhwagdam.domain.constant.GoodsStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+@Setter
 @AllArgsConstructor
 public class GoodsDto {
     private Long seq;
     private UserAccount userAccount;
+    private Category category;
     private String title;
     private String description;
-    private List<String> image;
     private int startingPrice;
     private int currentBidPrice;
     private LocalDateTime deadline;
+    private GoodsStatus status;
+    private List<GoodsImage> images;
     private LocalDateTime createdAt;
-    private String createdBy;
     private LocalDateTime modifiedAt;
-    private String modifiedBy;
-    private LocalDateTime deletedAt;
+
 
     public static GoodsDto fromEntity(Goods goods) {
         return new GoodsDto(
                 goods.getSeq(),
                 goods.getUserAccount(),
+                goods.getCategory(),
                 goods.getTitle(),
                 goods.getDescription(),
-                goods.getImage(),
                 goods.getStartingPrice(),
                 goods.getCurrentBidPrice(),
                 goods.getDeadline(),
+                goods.getStatus(),
+                goods.getImages(),
                 goods.getCreatedAt(),
-                goods.getCreatedBy(),
-                goods.getModifiedAt(),
-                goods.getModifiedBy(),
-                goods.getDeletedAt()
+                goods.getModifiedAt()
         );
     }
 }

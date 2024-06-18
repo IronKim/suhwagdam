@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -22,13 +21,7 @@ public class UserAccountDto implements UserDetails {
     private String password;
     private String email;
     private String nickname;
-    private Double creditScore;
     private RoleType roleType;
-    private LocalDateTime createdAt;
-    private String createdBy;
-    private LocalDateTime modifiedAt;
-    private String modifiedBy;
-    private LocalDateTime deletedAt;
 
     public static UserAccountDto fromEntity(UserAccount userAccount) {
         return new UserAccountDto(
@@ -37,13 +30,7 @@ public class UserAccountDto implements UserDetails {
                 userAccount.getPassword(),
                 userAccount.getEmail(),
                 userAccount.getNickname(),
-                userAccount.getCreditScore(),
-                userAccount.getRoleType(),
-                userAccount.getCreatedAt(),
-                userAccount.getCreatedBy(),
-                userAccount.getModifiedAt(),
-                userAccount.getModifiedBy(),
-                userAccount.getDeletedAt()
+                userAccount.getRoleType()
         );
     }
 
@@ -59,21 +46,21 @@ public class UserAccountDto implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return this.deletedAt == null;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return this.deletedAt == null;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return this.deletedAt == null;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return this.deletedAt == null;
+        return true;
     }
 }
