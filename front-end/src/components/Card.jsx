@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const CardStyled = styled.div`
   /* border: 1px solid black; */
   width: 250px;
-  height: 300px;
+  height: 320px;
   margin: auto;
   border-radius: 18px;
   text-align: center;
@@ -17,8 +17,8 @@ const CardStyled = styled.div`
   }
 
   @media (max-width: 639px) {
-    width: 350px;
-    height: 172px;
+    width: 100%;
+    height: 175px;
     display: flex;
     margin: 0 auto;
   }
@@ -30,17 +30,18 @@ const CardImageBox = styled.div`
   overflow: hidden;
   position: relative;
   border-radius: 18px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   @media (max-width: 639px;) {
-    width: 230px;
-    height: 200px;  
+    width: 150px;
+    height: 150px;
   }
 `;
 
 const CardImage = styled.img`
   width: 90%;
   height: 90%;
-  margin-top: 10px;
-  /* object-fit: cover; */
+  object-fit: cover;
   border-radius: 18px;
   transition: transform 0.5s ease;
 
@@ -50,49 +51,30 @@ const CardImage = styled.img`
     transform-origin: center center;
   }
   @media (max-width: 639px;) {
-    width: 300px;
-    height: 200px;
     padding: 10px 10px 10px 10px;
+    flex:1;
   }
 `;
 
 const Contents = styled.div`
-  border: 1px solid blue;
+  /* border: 1px solid blue; */
   width: 240px;
   margin-left: 3px;
   height: 120px;
-
   @media (max-width: 639px) {
-    width: 200px;
+
     height: 170px;
     flex-direction: column;
-    gap: 50%;
     align-items: center; 
   }
 `;  
-
-const TitleTimeBox = styled.div`
-  /* border: 1px solid green; */
-  display: block;
-  /* justify-content: space-between; */
-  white-space: nowrap;
-  font-size: 1.1rem;
-  width: 240px;
-
-  @media (max-width: 639px) {
-    display: flex;
-    flex-direction: column;
-    width: 200px;
-    height: 100px;
-  }
-`;
 
 const Title = styled.div`
   /* border: 1px solid red; */
   margin: 10px auto;
   display: block;
   width: 90%;
-  height: auto;
+  height: 40px;
   white-space: wrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -101,7 +83,7 @@ const Title = styled.div`
   -webkit-box-orient: vertical;
   
   @media (max-width: 639px) {
-    width: 180px;
+    width: 100%;
     height: 80px;
     margin: 15px auto;
     white-space: wrap;
@@ -110,47 +92,41 @@ const Title = styled.div`
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-
   }
 `;
 
 const Time = styled.div`
-  border: 1px solid orange;  
+  /* border: 1px solid orange;   */
+  margin-top: 15px;
   color: red;
   font-weight: bold;
   @media (max-width: 639px) {
-    display: block;
-    color: red;
-    height: 50px;
-    font-weight: bold;
-    font-size: 1.2rem;
-  }
-`;
-const PriceBox = styled.div`
-  border: 1px solid green;
-  display: block;
-  /* justify-content: space-between; */
-  white-space: nowrap;
-  font-size: 1.2rem;
-  width: 240px;
-  height: 30px;
-  margin-top: 5px;
-
-  @media (max-width: 639px) {
-    display: flex;
-    flex-direction: column;
     width: 100%;
-    margin-top: 10px;
-    height: 30px;
-
+    color: red;
+    height: 20px;
+    font-weight: bold;
+    font-size: 0.8;
   }
 `;
+
+
 const Price = styled.div`
-  border: 1px solid pink;
+  /* border: 1px solid pink; */
+  margin-top: 10px;
   font-size: 1.1rem;
   color: #5AC463;
   width : 100%;
   height: 30px;
+
+     @media (max-width: 639px) {
+     width: 100%;
+     display: flex;
+     flex-direction: column;
+     width: 100%;
+     margin-top: 10px;
+     height: 20px;
+     font-size: 15px;
+   }
 `;
 ////////////////////////////////////////////////////////////////////
 
@@ -186,7 +162,7 @@ const Card = ({ title, deadLine, current_bid_price, image }) => {
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft(calculateTime(deadLine))
-    }, 1000)
+    })
 
     return () => clearInterval(timer)
 
@@ -197,25 +173,23 @@ const Card = ({ title, deadLine, current_bid_price, image }) => {
   }
 
   return (
-      <div style={{margin: '0 auto' }}>
-          <CardStyled> 
-            <CardImageBox>
-              <CardImage src={ image } alt='image' />
-            </CardImageBox>
-              
-            <Contents>
-              <TitleTimeBox>
-                <Title>{ title }</Title>
-                <Time>{ timeLeft.hours }시간 { timeLeft.minutes }분 { timeLeft.seconds }초</Time>
-              </TitleTimeBox>
+        <CardStyled> 
+          <CardImageBox>
+            <CardImage src={ image } alt='image' />
+          </CardImageBox>
+            
+          <Contents>
+            {/* <TitleTimeBox> */}
+              <Title>{ title }</Title>
+              <Time>{ timeLeft.hours }시간 { timeLeft.minutes }분 { timeLeft.seconds }초</Time>
+            {/* </TitleTimeBox> */}
 
-              <PriceBox>
-                <Price>{ formatCurrentBidPrice(current_bid_price) }원</Price>
-              </PriceBox>
-            </Contents>
+            {/* <PriceBox> */}
+              <Price>{ formatCurrentBidPrice(current_bid_price) }원</Price>
+            {/* </PriceBox> */}
+          </Contents>
 
-          </CardStyled>
-      </div>
+        </CardStyled>
   );
 };
 
