@@ -1,0 +1,54 @@
+spring:
+  profiles:
+    active: local #default
+    group:
+      local:
+        - common
+      prod:
+        - common
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: common
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_ID}
+    password: ${MAIL_PW}
+    properties:
+      mail:
+        debug: true
+        smtp.auth: true
+        smtp.timeout: 50000
+        smtp.starttls.enable: true
+        smtp.ssl.trust: smtp.gmail.com
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  expired-time-ms: 864000000
+
+---
+logging:
+  level:
+    com.newdeal.suhwagdam: DEBUG
+    org.springframework.web.servlet: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${LOCAL_DB_URL}
+    username: ${LOCAL_DB_USERNAME}
+    password: ${LOCAL_DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  data:
+    redis:
+      url: ${LOCAL_REDIS_URL}

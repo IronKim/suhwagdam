@@ -2,6 +2,8 @@ package com.newdeal.suhwagdam.controller;
 
 import com.newdeal.suhwagdam.dto.Response;
 import com.newdeal.suhwagdam.dto.request.UserJoinRequest;
+import com.newdeal.suhwagdam.dto.request.UserLoginRequest;
+import com.newdeal.suhwagdam.dto.response.UserLoginResponse;
 import com.newdeal.suhwagdam.service.AuthService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
@@ -38,5 +40,11 @@ public class AuthController {
     public Response<Void> verify(@RequestParam String email, @RequestParam String certificationToken) {
         authService.verify(email, certificationToken);
         return Response.success();
+    }
+
+    @PostMapping("/login")
+    public Response<UserLoginResponse> login(@Valid UserLoginRequest userLoginRequest) {
+        String token = authService.login(userLoginRequest);
+        return Response.success(new UserLoginResponse(token));
     }
 }

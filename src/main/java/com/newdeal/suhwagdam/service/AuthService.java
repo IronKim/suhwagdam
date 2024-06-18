@@ -5,13 +5,16 @@ import com.newdeal.suhwagdam.domain.constant.RoleType;
 import com.newdeal.suhwagdam.dto.TempUserDto;
 import com.newdeal.suhwagdam.dto.UserAccountDto;
 import com.newdeal.suhwagdam.dto.request.UserJoinRequest;
+import com.newdeal.suhwagdam.dto.request.UserLoginRequest;
 import com.newdeal.suhwagdam.exception.ErrorCode;
 import com.newdeal.suhwagdam.exception.SuhwagdamApplicationException;
 import com.newdeal.suhwagdam.repository.TempUserAccountCacheRepository;
 import com.newdeal.suhwagdam.repository.UserAccountRepository;
+import com.newdeal.suhwagdam.util.JwtTokenUtils;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +32,11 @@ public class AuthService {
     private final BCryptPasswordEncoder encoder;
 
     public final static int TEMP_USER_TTL_IN_MINUTES = 5;
+
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+    @Value("${jwt.expired-time-ms}")
+    private long expiredTimeMs;
 
     public UserAccountDto loadAccountByAccountId(String accountId) {
         return userAccountRepository.findByAccountId(accountId).map(UserAccountDto::fromEntity)
@@ -83,5 +91,15 @@ public class AuthService {
                 .build());
 
         tempUserAccountCacheRepository.deleteJoinUserCache(tempUserDto);
+    }
+
+    public String login(UserLoginRequest userLoginRequest) {
+        UserAccountDto userAccountDto = loadAccountByAccountId(userLoginRequest.getAccountId());
+
+        if (!encoder.matches(userLoginRequest.getPassword(), userAccountDto.getPassword())) {
+            throw new SuhwagdamApplicationException(ErrorCode.INVALID_PASSWORD, "Password is invalid");
+        }
+
+        return JwtTokenUtils.generateToken(userAccountDto.getAccountId(), userAccountDto.getNickname(), RoleType.USER, secretKey, expiredTimeMs);
     }
 }
