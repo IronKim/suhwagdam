@@ -3,6 +3,20 @@ import React, {useState}from 'react';
 import styled from "styled-components";
 import Butt from '../components/Butt'
 import { Modal } from 'antd';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+
+const data = [
+  {
+    name: '진행 금액',pv: 3400, amt: 2400,
+  },
+  {
+    name: '진행시간',pv: 1000, amt: 2210,
+  },
+  {
+    name: '아무이름',pv: 1000, amt: 2210,
+  },
+  // 데이터넣자
+];
 
 const BaseDiv = styled.div`
 /* border: 1px solid red; */
@@ -298,7 +312,15 @@ const Detail = () => {
                         </BtnDiv>
                         <GraphDiv>
                           <Graph>
-
+                            <LineChart width={730} height={250} data={data}
+                              margin={{ top: 15, right: 80, bottom: 5 }}>
+                              <CartesianGrid strokeDasharray="3 3" />
+                              <XAxis dataKey="name" />
+                              <YAxis />
+                              <Tooltip />
+                              {/* <Legend /> */}
+                              <Line type="monotone" dataKey="pv" stroke="#8884d8" />
+                            </LineChart>
                           </Graph>
                         </GraphDiv>
                         <ActionText>경매현황</ActionText>

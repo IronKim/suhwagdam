@@ -17,11 +17,12 @@ import { TbPhotoPlus } from "react-icons/tb";
     `;
     const NameDiv = styled.div`
         /* border: 1px solid green; */
+        margin-top: 5%;
         height: 100px;
     `;
     const ContentDiv = styled.div`
         /* border: 1px solid red; */
-        
+        margin-top:10%;
     `;
     const EffectDiv = styled.div`
         /* border: 1px solid red; */
@@ -262,7 +263,7 @@ import { TbPhotoPlus } from "react-icons/tb";
     return (
         <div>
             <InnerDiv>
-                <NameDiv><h3 style={{marginLeft:'20px'}}>상품등록</h3></NameDiv>
+                <NameDiv><h1 style={{marginLeft:'20px'}}>상품등록</h1></NameDiv>
             <ContentDiv>
                 <StyledCate>
                     <StyledCateTitle>상품 사진</StyledCateTitle>
