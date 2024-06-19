@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Card from '../components/Card';
 import styled from 'styled-components';
-import data from '../asset/data/data.js';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
+import {useRecoilValue} from 'recoil';
+import {goodsState} from '../atoms/goodsState';
 
 const Container = styled.div`
     margin: 20px auto;
@@ -14,12 +15,12 @@ const Container = styled.div`
     @media (max-width: 1199px) {
         width: 100%;
         height: 100%;
-   }
+    }
 
-   @media (max-width: 639px) {
+    @media (max-width: 639px) {
         width: 80%;
         height: 80%;
-   }
+    }
 `;
 
 const CardDiv = styled.div`
@@ -29,7 +30,7 @@ const CardDiv = styled.div`
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     margin-bottom: 40px;
-    
+
     @media (max-width: 1199px) {
         height: 820px;
         grid-template-columns: repeat(3, 1fr);
@@ -51,12 +52,13 @@ const CardDiv = styled.div`
         height: auto;
     }
 `;
-    const SectionP = styled.div`
-        display: flex;
-        margin: 40px 0 15px 20px;
-        font-size: 25px;
-        font-weight: bold;
-                    
+
+const SectionP = styled.div`
+    display: flex;
+    margin: 40px 0 15px 20px;
+    font-size: 25px;
+    font-weight: bold;
+
     @media (max-width: 1199px) {
         margin-left: 30px;
     }
@@ -82,16 +84,22 @@ const LinkText = styled.p`
 `;
 
 const Main = () => {
-    const now = new Date()
-    
-    const filteredData = data.filter(item => {
-        const deadLineData = new Date(item.deadLine)
-        const countDown = (deadLineData - now) / (1000 * 60 * 60)
-            return countDown <= 1 && deadLineData > now
-    })  
+    const [now, setNow] = useState(new Date());
+    const data = useRecoilValue(goodsState);
 
-    const sortedDataDesc = [...data].sort((a, b) => new Date(b.deadLine) - new Date(a.deadLine)).slice(0, 8)
-    const sortedDataAsc = [...filteredData].sort((a, b) => new Date(a.deadLine) - new Date(b.deadLine)).slice(0, 8)
+    const [dataList, setDataList] = useState([]);
+
+    useEffect(() => {
+        setDataList([...data]);
+    }, [data]);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            setNow(new Date());
+        }, 500); // 0.5초마다 현재 시간 업데이트
+
+        return () => clearInterval(intervalId); // 컴포넌트 언마운트 시 인터벌 클리어
+    }, []);
 
     return (
         <Container>
@@ -102,16 +110,17 @@ const Main = () => {
                 </Link>
             </div>
 
-            <CardDiv> 
-                {   
-                    sortedDataDesc.map((item, index) => (
-                        <Card key={ index } 
-                                title={ item.title } 
-                                deadLine={ item.deadLine }   
-                                current_bid_price={ item.current_bid_price } 
-                                image={ item.image } />
-                    ))
-                }
+            <CardDiv>
+                {dataList && dataList
+                    .sort((a, b) => new Date(b.deadline) - new Date(a.deadline))
+                    .slice(0, 8)
+                    .map((item, index) => (
+                    <Card key={index}
+                          title={item.title}
+                          deadLine={item.deadline}
+                          current_bid_price={item.currentBidPrice}
+                          image={item.images[0]} />
+                ))}
             </CardDiv>
 
             <div style={{ display: 'flex' }}>
@@ -120,16 +129,18 @@ const Main = () => {
                     <LinkText>보러가기</LinkText>
                 </Link>
             </div>
-            <CardDiv> 
-                {   
-                    sortedDataAsc.map((item, index) => (
-                        <Card key={ index } 
-                                title={ item.title } 
-                                deadLine={ item.deadLine }   
-                                current_bid_price={ item.current_bid_price } 
-                                image={ item.image } />
-                    ))
-                }
+            <CardDiv>
+                {dataList && dataList
+                    //마감시간이 1시간 이내이고 마감시간이 안 지난 상품만 필터링
+                    .filter(item => new Date(item.deadline) - now <= 3600000 && new Date(item.deadline) - now > 0)
+                    .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
+                    .map((item, index) => (
+                    <Card key={index}
+                          title={item.title}
+                          deadLine={item.deadline}
+                          current_bid_price={item.currentBidPrice}
+                          image={item.image} />
+                ))}
             </CardDiv>
         </Container>
     );

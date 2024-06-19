@@ -1,6 +1,4 @@
-import React, {useEffect, useState} from 'react';
-import AuctionForm from "./pages/AuctionForm";
-import AuctionList from "./pages/AuctionList";
+import React, {useEffect} from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Login from "./pages/Login";
 import Join from "./pages/Join";
@@ -9,7 +7,6 @@ import Goods from "./pages/Goods";
 import SockJS from "sockjs-client";
 import {Stomp} from "@stomp/stompjs";
 import {getGoodsList} from "./api/GoodsApiService";
-import axios from "axios";
 import {useRecoilState} from "recoil";
 import {goodsState} from "./atoms/goodsState";
 import Main from "./pages/Main";
@@ -40,16 +37,13 @@ const View = () => {
             // 상품 등록,수정 이벤트 수신
             stompClient.subscribe('/topic/goods', (message) => {
                 const newGoods = JSON.parse(message.body);
-                console.log(newGoods)
+
                 setGoodsList(prevGoodsList => {
-                    const index = prevGoodsList.findIndex(goods => goods.id === newGoods.id);
-                    if (index >= 0) {
-                        // 상품 수정 시 업데이트
-                        const updatedGoodsList = [...prevGoodsList];
-                        updatedGoodsList[index] = newGoods;
-                        return updatedGoodsList;
+                    const updatedGoods = prevGoodsList.find(goods => goods.seq === newGoods.seq);
+
+                    if (updatedGoods) {
+                        return prevGoodsList.map(goods => goods.seq === newGoods.seq ? newGoods : goods);
                     } else {
-                        // 새로운 상품 추가
                         return [...prevGoodsList, newGoods];
                     }
                 });
@@ -64,7 +58,6 @@ const View = () => {
 
     return (
         <div>
-            {/*<AuctionList />*/}
             <BrowserRouter>
                 <Routes>
                     <Route path={'/'} element={<Main />} />
