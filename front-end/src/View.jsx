@@ -4,8 +4,6 @@ import Login from "./pages/Login";
 import Join from "./pages/Join";
 import Detail from "./pages/Detail";
 import Goods from "./pages/Goods";
-import SockJS from "sockjs-client";
-import {Stomp} from "@stomp/stompjs";
 import {getGoodsList} from "./api/GoodsApiService";
 import {useRecoilState} from "recoil";
 import {goodsState} from "./atoms/goodsState";

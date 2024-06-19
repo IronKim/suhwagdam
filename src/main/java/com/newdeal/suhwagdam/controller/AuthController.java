@@ -30,7 +30,7 @@ public class AuthController {
 
     // 임시 회원가입 요청
     @PostMapping("/join")
-    public Response<Void> join(@Valid UserJoinRequest userJoinRequest) throws MessagingException {
+    public Response<Void> join(@Valid @RequestBody UserJoinRequest userJoinRequest) throws MessagingException {
         authService.join(userJoinRequest);
         return Response.success();
     }
@@ -43,7 +43,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public Response<UserLoginResponse> login(@Valid UserLoginRequest userLoginRequest) {
+    public Response<UserLoginResponse> login(@Valid @RequestBody UserLoginRequest userLoginRequest) {
         String token = authService.login(userLoginRequest);
         return Response.success(new UserLoginResponse(token));
     }

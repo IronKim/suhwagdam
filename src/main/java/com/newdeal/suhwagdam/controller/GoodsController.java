@@ -8,10 +8,7 @@ import com.newdeal.suhwagdam.service.WebSocketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,7 +20,7 @@ public class GoodsController {
     private final WebSocketService webSocketService;
 
     @PostMapping
-    public Response<Void> createGoods(@Valid GoodsCreateRequest request, Authentication authentication) {
+    public Response<Void> createGoods(@Valid @RequestBody GoodsCreateRequest request, Authentication authentication) {
         GoodsResponse goodsResponse = GoodsResponse.fromGoodsDto(goodsService.create(request, authentication.getName()));
 
         // 상품 등록 시 브로드캐스트
