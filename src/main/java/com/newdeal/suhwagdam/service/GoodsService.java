@@ -10,12 +10,11 @@ import com.newdeal.suhwagdam.dto.request.GoodsCreateRequest;
 import com.newdeal.suhwagdam.exception.ErrorCode;
 import com.newdeal.suhwagdam.exception.SuhwagdamApplicationException;
 import com.newdeal.suhwagdam.repository.CategoryRepository;
-import com.newdeal.suhwagdam.repository.GoodsImageRepository;
 import com.newdeal.suhwagdam.repository.GoodsRepository;
 import com.newdeal.suhwagdam.repository.UserAccountRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,17 +53,11 @@ public class GoodsService {
         return GoodsDto.fromEntity(savedGoods);
     }
 
+    @Transactional(readOnly = true)
     public List<GoodsDto> list() {
         return goodsRepository.findAll().stream()
                 .map(GoodsDto::fromEntity)
                 .collect(Collectors.toList());
-    }
-
-    public GoodsDto updateCurrentBidPriceGoods(long goodsId, int currentBidPrice) {
-        Goods goods = goodsRepository.findById(goodsId).orElseThrow(() ->
-                new SuhwagdamApplicationException(ErrorCode.GOODS_NOT_FOUND, String.format("%s not founded", goodsId)));
-
-        return GoodsDto.fromEntity(goods);
     }
 
     private UserAccount getUserEntityException(String accountId) {

@@ -26,7 +26,8 @@ public class SecurityConfig {
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().requestMatchers(RegexRequestMatcher.regexMatcher("^(?!/api/).*"))
-                .requestMatchers("/api/*/auth/**");
+                .requestMatchers("/api/*/auth/**")
+                .requestMatchers(HttpMethod.GET, "/api/v1/goods");
     }
 
     @Bean

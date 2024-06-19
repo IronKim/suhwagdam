@@ -1,6 +1,9 @@
 package com.newdeal.suhwagdam.domain;
 
 import com.newdeal.suhwagdam.domain.constant.GoodsStatus;
+import com.newdeal.suhwagdam.dto.GoodsDto;
+import com.newdeal.suhwagdam.exception.ErrorCode;
+import com.newdeal.suhwagdam.exception.SuhwagdamApplicationException;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -71,5 +74,28 @@ public class Goods {
 
     public void clearImages() {
         this.images.clear();
+    }
+
+    public static Goods fromDto(GoodsDto goodsDto) {
+        return Goods.builder()
+                .seq(goodsDto.getSeq())
+                .userAccount(UserAccount.fromDto(goodsDto.getUserAccountDto()))
+                .title(goodsDto.getTitle())
+                .description(goodsDto.getDescription())
+                .category(goodsDto.getCategory())
+                .startingPrice(goodsDto.getStartingPrice())
+                .currentBidPrice(goodsDto.getCurrentBidPrice())
+                .deadline(goodsDto.getDeadline())
+                .status(goodsDto.getStatus())
+                .images(goodsDto.getImages().stream().map(GoodsImage::fromDto).toList())
+                .createdAt(goodsDto.getCreatedAt())
+                .build();
+    }
+
+    public void updateCurrentBidPrice(int newBidPrice) {
+        if (this.getCurrentBidPrice() >= newBidPrice) {
+            throw new SuhwagdamApplicationException(ErrorCode.INVALID_BID_AMOUNT, "Invalid bid amount");
+        }
+        this.currentBidPrice = newBidPrice;
     }
 }

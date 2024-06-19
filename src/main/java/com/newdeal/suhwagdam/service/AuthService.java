@@ -12,11 +12,11 @@ import com.newdeal.suhwagdam.repository.TempUserAccountCacheRepository;
 import com.newdeal.suhwagdam.repository.UserAccountRepository;
 import com.newdeal.suhwagdam.util.JwtTokenUtils;
 import jakarta.mail.MessagingException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 

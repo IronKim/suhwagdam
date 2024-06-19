@@ -1,6 +1,7 @@
 package com.newdeal.suhwagdam.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.newdeal.suhwagdam.dto.GoodsImageDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,4 +24,11 @@ public class GoodsImage {
 
     @Column(nullable = false)
     private String picture;
+
+    public static GoodsImage fromDto(GoodsImageDto goodsImageDto) {
+        return GoodsImage.builder()
+                .seq(goodsImageDto.getSeq())
+                .picture(goodsImageDto.getPicture())
+                .build();
+    }
 }
