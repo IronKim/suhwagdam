@@ -10,6 +10,7 @@ import {getGoodsList} from "./api/GoodsApiService";
 import {useRecoilState} from "recoil";
 import {goodsState} from "./atoms/goodsState";
 import Main from "./pages/Main";
+import {connectWebSocket, getStompClient} from "./webSocket/WebSocketClient";
 
 const View = () => {
 
@@ -30,8 +31,8 @@ const View = () => {
         initGoodsList();
 
         // 웹소켓 연결 설정
-        const socket = new SockJS('http://localhost:8080/ws');
-        const stompClient = Stomp.over(socket);
+        connectWebSocket();
+        const stompClient = getStompClient();
 
         stompClient.connect({}, (frame) => {
             // 상품 등록,수정 이벤트 수신
