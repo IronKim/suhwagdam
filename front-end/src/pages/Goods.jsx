@@ -156,7 +156,7 @@ import { TbPhotoPlus } from "react-icons/tb";
         return e?.fileList;
     };
     ///////////////////////////////////////////////////////////////////////////////////////////////
-    const Product  = () => {
+    const Goods  = () => {
 
         const [productDTO, setProductDTO] = useState({
             code:1,
@@ -361,4 +361,4 @@ import { TbPhotoPlus } from "react-icons/tb";
     );
 };
 
-export default Product ;
+export default Goods ;
