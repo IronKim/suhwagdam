@@ -116,6 +116,7 @@ const Main = () => {
                     .slice(0, 8)
                     .map((item, index) => (
                     <Card key={index}
+                          seq={item.seq}
                           title={item.title}
                           deadLine={item.deadline}
                           current_bid_price={item.currentBidPrice}
@@ -136,6 +137,7 @@ const Main = () => {
                     .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
                     .map((item, index) => (
                     <Card key={index}
+                          seq={item.seq}
                           title={item.title}
                           deadLine={item.deadline}
                           current_bid_price={item.currentBidPrice}

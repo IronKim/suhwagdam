@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
+import {Link} from "react-router-dom";
 
 const CardStyled = styled.div`
   /* border: 1px solid black; */
@@ -32,7 +33,7 @@ const CardImageBox = styled.div`
   border-radius: 18px;
   padding-top: 10px;
   padding-bottom: 10px;
-  @media (max-width: 639px;) {
+  @media (max-width: 639px) {
     width: 150px;
     height: 150px;
   }
@@ -50,7 +51,7 @@ const CardImage = styled.img`
     transform: scale(1.2);
     transform-origin: center center;
   }
-  @media (max-width: 639px;) {
+  @media (max-width: 639px) {
     padding: 10px 10px 10px 10px;
     flex:1;
   }
@@ -81,6 +82,7 @@ const Title = styled.div`
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  color: black;
   
   @media (max-width: 639px) {
     width: 100%;
@@ -105,7 +107,7 @@ const Time = styled.div`
     color: red;
     height: 20px;
     font-weight: bold;
-    font-size: 0.8;
+    font-size: 15px;
   }
 `;
 
@@ -156,7 +158,7 @@ const calculateTime = (deadLine) => {
   }
 }
 
-const Card = ({ title, deadLine, current_bid_price, image }) => {
+const Card = ({seq, title, deadLine, current_bid_price, image }) => {
   const [timeLeft, setTimeLeft] = useState(calculateTime(deadLine))
 
   useEffect(() => {
@@ -173,11 +175,12 @@ const Card = ({ title, deadLine, current_bid_price, image }) => {
   }
 
   return (
-        <CardStyled> 
+      <Link to={`/goods/${seq}`} style={{textDecoration: 'none'}}>
+        <CardStyled>
           <CardImageBox>
             <CardImage src={ image } alt='image' />
           </CardImageBox>
-            
+
           <Contents>
             {/* <TitleTimeBox> */}
               <Title>{ title }</Title>
@@ -190,6 +193,7 @@ const Card = ({ title, deadLine, current_bid_price, image }) => {
           </Contents>
 
         </CardStyled>
+      </Link>
   );
 };
 
