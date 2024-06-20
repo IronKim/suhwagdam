@@ -21,6 +21,6 @@ public class UserJoinRequest {
     private String email;
 
     @NotBlank
-    @Pattern(regexp = "^.{2,20}$") // 2~20자
+    @Pattern(regexp = "^.{2,8}$") // 2~8자
     private String nickname;
 }
