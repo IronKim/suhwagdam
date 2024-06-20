@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
-import { PlusOutlined } from '@ant-design/icons';
-import { DatePicker, TimePicker, Input, Form, Upload, Radio } from 'antd';
+import { DatePicker, TimePicker, Form, Upload, Radio } from 'antd';
 import styled from "styled-components";
 import Butt from '../components/Butt'
 import dayjs from 'dayjs';
