@@ -10,6 +10,7 @@ import {goodsState} from "./atoms/goodsState";
 import Main from "./pages/Main";
 import {connectWebSocket} from "./webSocket/WebSocketClient";
 import {subscribeToGoodsUpdates} from "./webSocket/Subscribe";
+import Header from "./components/Header";
 
 const View = () => {
 
@@ -38,6 +39,7 @@ const View = () => {
     return (
         <div>
             <BrowserRouter>
+                <Header />
                 <Routes>
                     <Route path={'/'} element={<Main />} />
                     <Route path={'/login'} element={<Login />} />
