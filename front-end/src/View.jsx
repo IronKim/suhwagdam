@@ -8,7 +8,8 @@ import {getGoodsList} from "./api/GoodsApiService";
 import {useRecoilState} from "recoil";
 import {goodsState} from "./atoms/goodsState";
 import Main from "./pages/Main";
-import {connectWebSocket, getStompClient} from "./webSocket/WebSocketClient";
+import {connectWebSocket} from "./webSocket/WebSocketClient";
+import {subscribeToGoodsUpdates} from "./webSocket/Subscribe";
 
 const View = () => {
 
@@ -25,33 +26,12 @@ const View = () => {
     }
 
     useEffect(() => {
-        // 초기 상품 리스트 가져오기
+        // 초기 상품 목록 조회
         initGoodsList();
-
         // 웹소켓 연결 설정
         connectWebSocket();
-        const stompClient = getStompClient();
 
-        stompClient.connect({}, (frame) => {
-            // 상품 등록,수정 이벤트 수신
-            stompClient.subscribe('/topic/goods', (message) => {
-                const newGoods = JSON.parse(message.body);
-
-                setGoodsList(prevGoodsList => {
-                    const updatedGoods = prevGoodsList.find(goods => goods.seq === newGoods.seq);
-
-                    if (updatedGoods) {
-                        return prevGoodsList.map(goods => goods.seq === newGoods.seq ? newGoods : goods);
-                    } else {
-                        return [...prevGoodsList, newGoods];
-                    }
-                });
-            });
-        });
-
-        return () => {
-            stompClient.disconnect();
-        };
+        subscribeToGoodsUpdates(setGoodsList);
     }, []);
 
 

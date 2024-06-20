@@ -72,7 +72,7 @@ const SectionP = styled.div`
 
 const LinkText = styled.p`
     display: flex;
-    margin: 45px 0 10px 50px;
+    margin: 45px 0 10px 20px;
     color: #5AC463;
     font-size: 15px;
 
@@ -105,7 +105,7 @@ const Main = () => {
         <Container>
             <div style={{ display: 'flex' }}>
                 <SectionP>진행 중인 상품</SectionP>
-                <Link to='/list/ing'>
+                <Link to='/list/ing' style={{textDecoration: 'none'}}>
                     <LinkText>보러가기</LinkText>
                 </Link>
             </div>
@@ -125,7 +125,7 @@ const Main = () => {
 
             <div style={{ display: 'flex' }}>
                 <SectionP>마감 임박 상품</SectionP>
-                <Link to='/list/oneHour'>
+                <Link to='/list/oneHour' style={{textDecoration: 'none'}}>
                     <LinkText>보러가기</LinkText>
                 </Link>
             </div>
@@ -139,7 +139,7 @@ const Main = () => {
                           title={item.title}
                           deadLine={item.deadline}
                           current_bid_price={item.currentBidPrice}
-                          image={item.image} />
+                          image={item.images[0]} />
                 ))}
             </CardDiv>
         </Container>

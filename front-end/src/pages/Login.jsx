@@ -2,24 +2,25 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { Checkbox, Form, Input } from 'antd';
-import { login } from '../../src/api/AuthApiService';
+import { login } from '../api/AuthApiService';
 import Butt from '../components/Butt';
 import sweet from 'sweetalert2'; 
 
 const InnerDiv = styled.div`
-  @media (min-width: 800px) {
-    margin: auto;
-    width: 800px;
-  }
+    width: 60%;
+    margin: 0 auto;
+    
+    @media (max-width: 999px) {
+        width: 100%;
+    }
 `;
 
 const NameDiv = styled.div`
-  height: 100px;
-  margin-top: 5%;
+  margin-top: 50px
 `;
 
 const ContentDiv = styled.div`
-  margin-top: 10%;
+    width: 100%;
 `;
 
 const StyledInput = styled(Input)`
@@ -28,7 +29,6 @@ const StyledInput = styled(Input)`
   height: 45px;
   font-size: 25px;
   border-radius: 8px;
-  padding: 5px 10px;
 
   &:focus {
     border: 1px solid #5AC463 !important;
@@ -44,6 +44,10 @@ const StyledInput = styled(Input)`
   }
 `;
 
+const StyledFormItem = styled(Form.Item)`
+    width: 100%;
+`;
+
 const StyledPasswordInput = styled(Input.Password)`
   border: 1px solid #E8E8E8;
   width: 90%;
@@ -57,6 +61,10 @@ const StyledPasswordInput = styled(Input.Password)`
     outline: none;
   }
   &:hover {
+    border: 1px solid #5AC463 !important;
+    outline: none;
+  }
+  &:focus-within {
     border: 1px solid #5AC463 !important;
     outline: none;
   }
@@ -113,47 +121,52 @@ const loginInput = (e) => {
                     })
                   })
             }
-          })
+          }).catch((error) => {
+        })
     };
 
   return (
-    <div>
+    <div style={{
+        maxWidth: '1200px',
+        margin: '0 auto'
+    }}>
       <InnerDiv>
         <NameDiv><h1 style={{ marginLeft: '20px', fontSize: '35px' }}>로그인</h1></NameDiv>
         <ContentDiv>
           <Form
             form={form}
             name="basic"
-            labelCol={{ span: 8 }}
-            wrapperCol={{ span: 16 }}
-            style={{ maxWidth: 600 }}
             initialValues={{ remember: true }}
             requiredMark={false}
             colon={false}
           >
-            <Form.Item
-              label="아이디"
+              <div
+              style={{
+                  width: '80%',
+                  margin: '0 auto'
+              }}>
+            <StyledFormItem
+              label={<div style={{ width: '60px'}}>아이디</div>}
               name="accountId"
               rules={[{ required: true, message: '아이디를 입력해주세요.' }]}
               style={{ marginTop: '100px' }}
             >
               <StyledInput name="accountId" value={loginDTO.accountId} onChange={loginInput} />
-            </Form.Item>
+            </StyledFormItem>
 
-            <Form.Item
-              label="비밀번호"
+            <StyledFormItem
+              label={<div style={{ width: '60px'}}>비밀번호</div>}
               name="password"
               rules={[{ required: true, message: '비밀번호를 입력해주세요' }]}
               style={{ marginTop: '50px', paddingTop: '0px' }}
             >
               <StyledPasswordInput name="password" value={loginDTO.password} onChange={loginInput} />
-            </Form.Item>
+            </StyledFormItem>
 
-            <Form.Item
+            <StyledFormItem
               name="rememberMe"
               valuePropName="checked"
-              wrapperCol={{ offset: 8, span: 16 }}
-              style={{ marginTop: '30px' }}
+              style={{ marginTop: '30px', width: '80%', margin: '0 auto' }}
             >
               <Checkbox
                 name="rememberMe"
@@ -163,14 +176,15 @@ const loginInput = (e) => {
               >
                 자동 로그인
               </Checkbox>
-            </Form.Item>
+            </StyledFormItem>
 
-            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+            <Form.Item>
                 
               <div style={{ width: '100%', textAlign: 'center', marginTop: '40px' }}>
                 <Butt cursor="pointer" onClick={loginButton}>로그인</Butt>
               </div>
             </Form.Item>
+              </div>
           </Form>
         </ContentDiv>
       </InnerDiv>
