@@ -11,6 +11,7 @@ import Main from "./pages/Main";
 import {connectWebSocket} from "./webSocket/WebSocketClient";
 import {subscribeToGoodsUpdates} from "./webSocket/Subscribe";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 const View = () => {
 
@@ -47,6 +48,7 @@ const View = () => {
                     <Route path={'/goods-register'} element={<Goods />} />
                     <Route path={'/goods/:goodsSeq'} element={<Detail />} />
                 </Routes>
+                <Footer />
             </BrowserRouter>
         </div>
     );
