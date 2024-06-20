@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import styled from 'styled-components';
-import { Checkbox, Form, Input } from 'antd';
-import { login } from '../api/AuthApiService';
+import {Checkbox, Form, Input, Typography} from 'antd';
+import {login} from '../api/AuthApiService';
 import Butt from '../components/Butt';
-import sweet from 'sweetalert2'; 
+import sweet from 'sweetalert2';
 
 const InnerDiv = styled.div`
     width: 60%;
@@ -15,8 +15,8 @@ const InnerDiv = styled.div`
     }
 `;
 
-const NameDiv = styled.div`
-  margin-top: 50px
+const NameDiv = styled(Typography.Title)`
+    margin-top: 7.9239vw;
 `;
 
 const ContentDiv = styled.div`
@@ -46,6 +46,14 @@ const StyledInput = styled(Input)`
 
 const StyledFormItem = styled(Form.Item)`
     width: 100%;
+`;
+
+const StyledCk = styled(Form.Item)`
+    width: 80%;
+    
+    @media (max-width: 639px) {
+        width: 95%;
+    }
 `;
 
 const StyledPasswordInput = styled(Input.Password)`
@@ -131,7 +139,7 @@ const loginInput = (e) => {
         margin: '0 auto'
     }}>
       <InnerDiv>
-        <NameDiv><h1 style={{ marginLeft: '20px', fontSize: '35px' }}>로그인</h1></NameDiv>
+        <NameDiv level={1} style={{ marginLeft: '20px'}}>로그인</NameDiv>
         <ContentDiv>
           <Form
             form={form}
@@ -149,7 +157,7 @@ const loginInput = (e) => {
               label={<div style={{ width: '60px'}}>아이디</div>}
               name="accountId"
               rules={[{ required: true, message: '아이디를 입력해주세요.' }]}
-              style={{ marginTop: '100px' }}
+              style={{ marginTop: '50px' }}
             >
               <StyledInput name="accountId" value={loginDTO.accountId} onChange={loginInput} />
             </StyledFormItem>
@@ -163,10 +171,10 @@ const loginInput = (e) => {
               <StyledPasswordInput name="password" value={loginDTO.password} onChange={loginInput} />
             </StyledFormItem>
 
-            <StyledFormItem
+            <StyledCk
               name="rememberMe"
               valuePropName="checked"
-              style={{ marginTop: '30px', width: '80%', margin: '0 auto' }}
+              style={{ marginTop: '30px', margin: '0 auto' }}
             >
               <Checkbox
                 name="rememberMe"
@@ -176,7 +184,7 @@ const loginInput = (e) => {
               >
                 자동 로그인
               </Checkbox>
-            </StyledFormItem>
+            </StyledCk>
 
             <Form.Item>
                 
