@@ -4,10 +4,13 @@ import styled from 'styled-components';
 // 푸터 전체 컨테이너 스타일
 const FooterContainer = styled.div`
   background-color: #f8f8f8;
-  padding: 40px 20px;
+  padding: 40px 0;
   text-align: center;
-  font-family: Arial, sans-serif;
   color: #333;
+  position: relative;
+  height: 20vh;
+  margin-top: 250px;
+    
 
   @media (max-width : 639px){
     display : none; 
