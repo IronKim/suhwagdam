@@ -27,7 +27,8 @@ public class SecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().requestMatchers(RegexRequestMatcher.regexMatcher("^(?!/api/).*"))
                 .requestMatchers("/api/*/auth/**")
-                .requestMatchers(HttpMethod.GET, "/api/v1/goods");
+                .requestMatchers(HttpMethod.GET, "/api/v1/goods/**")
+                .requestMatchers(HttpMethod.GET, "/api/v1/bid/**");
     }
 
     @Bean
@@ -35,7 +36,8 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/*/auth/*").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/goods").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/goods/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/bid/*").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
