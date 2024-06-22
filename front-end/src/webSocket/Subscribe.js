@@ -1,26 +1,24 @@
-import {getStompClient} from "./WebSocketClient";
+import {subscribeToTopic} from "./WebSocketClient";
 
 export const subscribeToGoodsUpdates = (setGoodsList) => {
-    const stompClient = getStompClient();
+    return subscribeToTopic('/topic/goods', (message) => {
+        const newGoods = JSON.parse(message.body);
 
-    stompClient.connect({}, (frame) => {
-        // 상품 등록,수정 이벤트 수신
-        stompClient.subscribe('/topic/goods', (message) => {
-            const newGoods = JSON.parse(message.body);
+        setGoodsList(prevGoodsList => {
+            const existingGoods = prevGoodsList.find(goods => goods.seq === newGoods.seq);
 
-            setGoodsList(prevGoodsList => {
-                const updatedGoods = prevGoodsList.find(goods => goods.seq === newGoods.seq);
-
-                if (updatedGoods) {
-                    return prevGoodsList.map(goods => goods.seq === newGoods.seq ? newGoods : goods);
-                } else {
-                    return [...prevGoodsList, newGoods];
-                }
-            });
+            if (existingGoods) {
+                return prevGoodsList.map(goods => goods.seq === newGoods.seq ? newGoods : goods);
+            } else {
+                return [...prevGoodsList, newGoods];
+            }
         });
     });
+}
 
-    return () => {
-        stompClient.disconnect();
-    };
+export const subscribeToBidUpdates = (goodsSeq, setBids) => {
+    return subscribeToTopic(`/topic/bid/goods/${goodsSeq}`, (message) => {
+        const newBid = JSON.parse(message.body);
+        setBids(prevBids =>[...prevBids, newBid]);
+    });
 }
