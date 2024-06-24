@@ -27,6 +27,14 @@ public class RedisConfig {
         org.springframework.data.redis.connection.RedisConfiguration configuration = LettuceConnectionFactory.createRedisConfiguration(redisURI);
         LettuceConnectionFactory factory = new LettuceConnectionFactory(configuration);
         factory.afterPropertiesSet();
+
+        // 연결 테스트
+        try {
+            factory.getConnection().ping();
+        } catch (Exception e) {
+            throw new RuntimeException("Redis connection failed");
+        }
+
         return factory;
     }
 

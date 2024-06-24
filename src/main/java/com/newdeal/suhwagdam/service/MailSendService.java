@@ -4,7 +4,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class MailSendService {
-    private final JavaMailSender mailSender;
+    private final JavaMailSenderImpl mailSenderImpl;
     private final HttpServletRequest request; // TODO 서버 연결시 변경 필요
 
     public void sendEmailForCertification(String email, String certificationToken) throws MessagingException {
@@ -21,11 +21,11 @@ public class MailSendService {
     }
 
     private void sendMail(String email, String subject, String content) throws MessagingException {
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        MimeMessage mimeMessage = mailSenderImpl.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
         helper.setTo(email);
         helper.setSubject(subject);
         helper.setText(content);
-        mailSender.send(mimeMessage);
+        mailSenderImpl.send(mimeMessage);
     }
 }
