@@ -13,6 +13,7 @@ public enum ErrorCode {
     INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "Password is invalid"),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Token is invalid"),
     GOODS_NOT_FOUND(HttpStatus.NOT_FOUND, "Goods not founded"),
+    BID_NOT_FOUND(HttpStatus.NOT_FOUND, "Bid not founded"),
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "Category not founded"),
     INVALID_BID_AMOUNT(HttpStatus.BAD_REQUEST, "Bid amount is invalid"),
     INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "Permission is invalid"),
