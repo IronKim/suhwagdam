@@ -18,13 +18,6 @@ spring:
     port: 587
     username: ${MAIL_ID}
     password: ${MAIL_PW}
-    properties:
-      mail:
-        debug: true
-        smtp.auth: true
-        smtp.timeout: 50000
-        smtp.starttls.enable: true
-        smtp.ssl.trust: smtp.gmail.com
   jpa:
     open-in-view: false
 jwt:
