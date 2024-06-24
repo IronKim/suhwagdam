@@ -34,8 +34,8 @@ const CardImageBox = styled.div`
   padding-top: 10px;
   padding-bottom: 10px;
   @media (max-width: 639px) {
-    width: 150px;
-    height: 150px;
+    width: 50%;
+    padding: 0;
   }
 `;
 
