@@ -25,6 +25,8 @@ spring:
         smtp.timeout: 50000
         smtp.starttls.enable: true
         smtp.ssl.trust: smtp.gmail.com
+  jpa:
+    open-in-view: false
 jwt:
   secret-key: ${JWT_SECRET_KEY}
   expired-time-ms: 864000000
@@ -52,3 +54,5 @@ spring:
   data:
     redis:
       url: ${LOCAL_REDIS_URL}
+      repositories:
+        enabled: false
