@@ -12,12 +12,16 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import List from './pages/List';
 import {subscribeToGoodsUpdates} from "./webSocket/Subscribe";
+import {userState} from "./atoms/userState";
+import {jwtDecode} from "jwt-decode";
+import UserRoute from "./components/UserRoute";
 import Confirm from "./pages/Confirm";
 
 
 const View = () => {
 
     const [goodsList, setGoodsList] = useRecoilState(goodsState);
+    const [userData, setUserData] = useRecoilState(userState);
 
     const initGoodsList = () => {
         getGoodsList()
@@ -30,6 +34,10 @@ const View = () => {
     }
 
     useEffect(() => {
+        // 로그인 정보 조회
+        const token = localStorage.getItem('suhwagdamToken') || sessionStorage.getItem('suhwagdamToken');
+        token && setUserData(jwtDecode(token));
+
         // 초기 상품 목록 조회
         initGoodsList();
         // 상품 업데이트 구독
@@ -49,7 +57,7 @@ const View = () => {
                     <Route path={'/list/:state'} element={<List />} />
                     <Route path={'/login'} element={<Login />} />
                     <Route path={'/join'} element={<Join />} />
-                    <Route path={'/goods-register'} element={<Goods />} />
+                    <Route path={'/goods-register'} element={<UserRoute> <Goods /> </UserRoute>} />
                     <Route path={'/goods/:goodsSeq'} element={<Detail />} />
                     <Route path={'/confirm'} element={<Confirm />} />
                 </Routes>
