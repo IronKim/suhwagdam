@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import logo from '../asset/images/suhwagdam_logo.png';
-import { Link, useNavigate } from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {RxHamburgerMenu} from "react-icons/rx";
-import { IoCloseOutline } from "react-icons/io5";
-import Sidebar from './Sidebar';
 import {IoCloseOutline} from "react-icons/io5";
+import Sidebar from './Sidebar';
 import {useRecoilState} from "recoil";
 import {userState} from "../atoms/userState";
 import sweet from "sweetalert2";
@@ -56,7 +55,7 @@ const Logo = styled(Link)` // 로고 스타일
 `;
 
 const Login = styled.div` 
-    width: 150px;
+    width: 300px;
     height: 50px;
     align-items: center;
     display: flex;
