@@ -9,7 +9,7 @@ import { Checkbox } from 'antd';
 import { useRecoilValue } from 'recoil';
 import { goodsState } from '../atoms/goodsState';
 import { Link, useParams } from 'react-router-dom';
-import none from '../asset/images/none.png';
+import ItemEmpty from "../components/ItemEmpty";
 
 const Container = styled.div` 
     margin: 50px auto;
@@ -365,13 +365,6 @@ const CardDiv = styled.div`
         padding: 0;
     }
 `;
-const ItemNone = styled.div`
-    height: 170px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-`;
 
 const List = () => {
     const [now, setNow] = useState(new Date()); // 현재 시간 상태
@@ -594,11 +587,8 @@ const List = () => {
             </CardDiv>
             <div ref={ref} /> {/* inView Scroll 생성 위치 */}
             {
-                dataList.length === 0 &&
-                <ItemNone>
-                    <img src={none} width='200px'/>
-                    <div style={{color:'darkgray'}}>상품이 없습니다 :(</div>
-                </ItemNone>
+                dataList.length === 0 && <ItemEmpty />
+
             }
         </Container>
     );

@@ -52,7 +52,7 @@ const Logo = styled(Link)` // 로고 스타일
 `;
 
 const Login = styled.div` 
-    width: 300px;
+    width: 150px;
     height: 50px;
     align-items: center;
     justify-content: space-around;
