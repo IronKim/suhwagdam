@@ -7,7 +7,9 @@ const StyledButton = styled.button`
   height:${(props) => props.height || "50px"};
   padding: 6px 12px;
   border-radius: 8px;
-  font-size: 20px;
+  font-size: ${(props) => props.height || "20px"};
+  padding-top: 10px;
+  padding-bottom: 10px;
   line-height: 1.5;
   border: 1px solid lightgray;
   font-weight: bold;
