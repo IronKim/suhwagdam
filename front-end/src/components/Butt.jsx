@@ -17,6 +17,13 @@ const StyledButton = styled.button`
   color: ${(props) => props.color || "#FFFFFF"};
   background: ${(props) => props.background || "#5AC463"};
   cursor: ${(props) => props.cursor || ""};
+    
+        
+  &:hover {
+      background: ${(props) => props.hoverBackground || "#4CAF50"};
+      color: ${(props) => props.hoverColor || "#FFFFFF"};
+      cursor: pointer;
+  }
   
   ${(props) =>
     props.media &&

@@ -5,6 +5,7 @@ import sweet from 'sweetalert2';
 import { Form, Input, Typography} from 'antd';
 import {join} from '../api/AuthApiService';
 import {checkId,checkEmail} from '../api/AuthApiService';
+import {useNavigate} from "react-router-dom";
 
 const InnerDiv = styled.div`
 /* border: 1px solid red; */
@@ -78,6 +79,7 @@ const ContentDiv = styled.div`
     width: 100%;
 `;
 const Join = () => {
+    const navigate = useNavigate();
 
     const [usertDTO, setUsertDTO] = useState({
         accountId: '',   
@@ -142,44 +144,59 @@ const Join = () => {
             checkId(usertDTO.accountId)
             .then(res => {
                 console.log(res.data.result);
-                if (res.data.result){
+                if (res.data.result) {
                     sweet.fire({
                         text: '이미 사용 중인 아이디입니다.',
                         icon: 'error',
                     });
-                }//
+                } else {
+                    checkEmail(usertDTO.email)
+                        .then(res => {
+                            console.log(res.data.result);
+                            if (res.data.result) {
+                                sweet.fire({
+                                    text: '이미 사용 중인 이메일입니다.',
+                                    icon: 'error',
+                                });
+                            } else {
+                                const loadingModal = sweet.fire({
+                                    title: '회원가입 중',
+                                    html: '잠시만 기다려주세요...',
+                                    allowOutsideClick: false,
+                                    showConfirmButton: false,
+                                    allowEnterKey: false,
+                                    onBeforeOpen: () => {
+                                        sweet.showLoading();
+                                    },
+                                });
+                                join(usertDTO)
+                                    .then(res => {
+                                        loadingModal.close();
+                                        sweet.fire({
+                                            text: '해당 이메일로 인증번호를 전송했습니다. 인증을 완료해주세요.',
+                                            icon: 'success',
+                                        });
+                                        navigate('/login');
+                                    })
+                                    .catch(err => {
+                                        sweet.fire({
+                                            text: '회원가입에 실패했습니다. 다시 시도 해주세요',
+                                            icon: 'error',
+                                        });
+                                        navigate('/');
+                                    })
+                            }
+                        })
+                }
+                ;
             })
-            .catch(error => {
-                console.error('아이디 중복 체크 오류:', error);
-            });
-            checkEmail(usertDTO.email)
-            .then(res => {
-                console.log(res.data.result);
-                if (res.data.result){
-                    sweet.fire({
-                        text: '이미 사용 중인 이메일입니다.',
-                        icon: 'error',
-                    });
-                }//
-            })
-            .catch(error => {
-                console.error('이메일 중복 체크 오류:', error);
-            });
-        join(usertDTO).then(res => {
-            console.log(res)
+        }).catch(() => {
             sweet.fire({
-                text: "이메일 인증을 완료해주세요.",
-                icon: "success"
-            })
-        }).catch((e) => {
-            console.error('실패', e)
-        })
-            
-
-        }).catch((e) => {
-            console.error('유효성실패', e) //넘 고통스러웠다...끝...
-        })
-    };
+                text: '입력값을 확인해주세요.',
+                icon: 'error',
+            });
+        });
+    }
 
     return (
         <div>

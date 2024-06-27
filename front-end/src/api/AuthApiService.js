@@ -12,3 +12,6 @@ export const checkEmail = (email) => {
 export const join = (usertDTO) => {
     return apiClient.post('api/v1/auth/join', usertDTO);
   };
+export const verify = (email, certificationToken) => {
+    return apiClient.get(`api/v1/auth/verify?email=${email}&certificationToken=${certificationToken}`);
+  };
