@@ -1,14 +1,16 @@
 import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import logo from '../asset/images/suhwagdam_logo.png';
-import {Link} from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {RxHamburgerMenu} from "react-icons/rx";
+import { IoCloseOutline } from "react-icons/io5";
+import Sidebar from './Sidebar';
 import {IoCloseOutline} from "react-icons/io5";
 import {useRecoilState} from "recoil";
 import {userState} from "../atoms/userState";
 import sweet from "sweetalert2";
 
-const HeaderContainer = styled.div`
+const HeaderContainer = styled.div` // 헤더 전체 컨테이너 스타일
     border-bottom: 1px solid lightgray;
     width: 100%;
     height: 150px;
@@ -21,7 +23,7 @@ const HeaderContainer = styled.div`
     }
 `;
 
-const Logo = styled(Link)`
+const Logo = styled(Link)` // 로고 스타일
     margin: auto;
     height: 100px;
     justify-content: center;
@@ -53,8 +55,8 @@ const Logo = styled(Link)`
     }
 `;
 
-const Login = styled.div`
-    width: 300px;
+const Login = styled.div` 
+    width: 150px;
     height: 50px;
     align-items: center;
     display: flex;
@@ -80,16 +82,16 @@ const Login = styled.div`
 
 const HamburgerBtn = styled.div`
     display: none;
-
+    
     @media (max-width: 639px) {
         /* border: 1px solid black; */
         width: 25px;
         height: 25px;
+        position: fixed;
         display: block;
-        position: absolute;
-        right: 50px;
-        top: 20px;
-        font-size: 48px;
+        right: 25px;
+        top: 15px;
+        font-size: 35px;
         color: #404040;
         z-index: 999;
     }
@@ -100,10 +102,18 @@ const Header = () => {
     const [visible, setVisible] = useState(false);
     const [userData, setUserData] = useRecoilState(userState);
 
+    const navigate = useNavigate(); // useNavigate로 페이지 이동 1
+
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
 
+
+    // 함수형 컴포넌트에서 useEffect를 사용하여 컴포넌트 마운트 상태에 따라 특정 작업을 처리 2
+    useEffect(() => {
+        setIsOpen(false);
+    },[navigate])
+  
     const logout = () => {
         sweet.fire({
             icon: 'success',
@@ -144,7 +154,7 @@ const Header = () => {
                     }
                 </Login>
             </HeaderContainer>
-            {/*<Sidebar isOpen={isOpen} />*/}
+            <Sidebar isOpen={isOpen} />
         </div>
     );
 };
