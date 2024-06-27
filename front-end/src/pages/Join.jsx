@@ -20,7 +20,7 @@ const NameDiv = styled(Typography.Title)`
     margin-top: 7.9239vw;
 `;
 const ContentDiv = styled.div`
-    width: 60%;
+    width: 100%;
     margin: auto;
     
 @media (max-width: 800px){
@@ -199,7 +199,10 @@ const Join = () => {
     }
 
     return (
-        <div>
+        <div style={{
+            maxWidth: '1200px',
+            margin: '0 auto'
+        }}>
             <InnerDiv>
                 <NameDiv><h1 style={{marginLeft:'20px'}}>회원가입</h1></NameDiv>
                 <ContentDiv>
