@@ -5,6 +5,9 @@ import {Checkbox, Form, Input, Typography} from 'antd';
 import {login} from '../api/AuthApiService';
 import Butt from '../components/Butt';
 import sweet from 'sweetalert2';
+import {useSetRecoilState} from "recoil";
+import {userState} from "../atoms/userState";
+import {jwtDecode} from "jwt-decode";
 
 const InnerDiv = styled.div`
     width: 60%;
@@ -83,6 +86,7 @@ const StyledPasswordInput = styled(Input.Password)`
 `;
 
 const Login = () => {
+  const setUserData = useSetRecoilState(userState);
   const navigate = useNavigate();
   const [loginDTO, setLoginDTO] = useState({
     accountId: '',
@@ -113,6 +117,7 @@ const loginInput = (e) => {
                     } else {
                         sessionStorage.setItem('suhwagdamToken', res.data.result.token)
                     }
+                    setUserData(jwtDecode(res.data.result.token));
                     ///////
                     sweet.fire({
                         title: "로그인 되었습니다.",

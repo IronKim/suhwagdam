@@ -1,9 +1,12 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components';
 import logo from '../asset/images/suhwagdam_logo.png';
 import {Link} from 'react-router-dom';
 import {RxHamburgerMenu} from "react-icons/rx";
 import {IoCloseOutline} from "react-icons/io5";
+import {useRecoilState} from "recoil";
+import {userState} from "../atoms/userState";
+import sweet from "sweetalert2";
 
 const HeaderContainer = styled.div`
     border-bottom: 1px solid lightgray;
@@ -51,14 +54,13 @@ const Logo = styled(Link)`
 `;
 
 const Login = styled.div`
-    width: 150px;
+    width: 300px;
     height: 50px;
     align-items: center;
-    justify-content: space-around;
     display: flex;
-    padding: 0 20px 0 20px;
     font-size: 20px;
     margin: auto;
+    justify-content: center;
 
     P {
         margin: 0 5px;
@@ -96,10 +98,27 @@ const HamburgerBtn = styled.div`
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [visible, setVisible] = useState(false);
+    const [userData, setUserData] = useRecoilState(userState);
 
     const toggleMenu = () => {
         setIsOpen(!isOpen);
     };
+
+    const logout = () => {
+        sweet.fire({
+            icon: 'success',
+            title: '로그아웃 되었습니다.',
+            showConfirmButton: false,
+            timer: 1500
+
+        }).then(() => {
+
+            localStorage.removeItem('suhwagdamToken');
+            sessionStorage.removeItem('suhwagdamToken');
+            setUserData({accountId: '', nickname: ''});
+        })
+
+    }
 
     return (
         <div style={{width: '100%'}}>
@@ -110,9 +129,19 @@ const Header = () => {
                 </HamburgerBtn>
                
                 <Login visible={ visible }>
-                    <Link to='/login' style={{ textDecoration: 'none' }}><p>로그인</p></Link>
+                    {
+                        userData.accountId ?
+                            <p>{userData.nickname}님</p>
+                            :
+                            <Link to='/join' style={{ textDecoration: 'none' }}><p>회원가입</p></Link>
+                    }
                     |
-                    <Link to='/join' style={{ textDecoration: 'none' }}><p>회원가입</p></Link>
+                    {
+                        userData.accountId ?
+                            <Link to={'/'} style={{textDecoration:'none'}} ><p onClick={logout}>로그아웃</p></Link>
+                            :
+                            <Link to='/login' style={{ textDecoration: 'none' }}><p>로그인</p></Link>
+                    }
                 </Login>
             </HeaderContainer>
             {/*<Sidebar isOpen={isOpen} />*/}
