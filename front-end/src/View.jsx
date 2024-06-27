@@ -11,6 +11,7 @@ import Main from "./pages/Main";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import {subscribeToGoodsUpdates} from "./webSocket/Subscribe";
+import Confirm from "./pages/Confirm";
 
 const View = () => {
 
@@ -48,6 +49,7 @@ const View = () => {
                     <Route path={'/join'} element={<Join />} />
                     <Route path={'/goods-register'} element={<Goods />} />
                     <Route path={'/goods/:goodsSeq'} element={<Detail />} />
+                    <Route path={'/confirm'} element={<Confirm />} />
                 </Routes>
                 <Footer />
             </BrowserRouter>
