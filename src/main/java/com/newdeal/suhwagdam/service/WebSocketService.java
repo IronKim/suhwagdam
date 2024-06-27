@@ -1,5 +1,6 @@
 package com.newdeal.suhwagdam.service;
 
+import com.newdeal.suhwagdam.dto.response.BidResponse;
 import com.newdeal.suhwagdam.dto.response.GoodsResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -12,5 +13,9 @@ public class WebSocketService {
 
     public void broadcastGoodsUpdate(GoodsResponse goodsResponse) {
         messagingTemplate.convertAndSend("/topic/goods", goodsResponse);
+    }
+
+    public void broadcastBidUpdate(BidResponse bidResponse) {
+        messagingTemplate.convertAndSend("/topic/bid/goods/" + bidResponse.getGoodsResponse().getSeq(), bidResponse);
     }
 }

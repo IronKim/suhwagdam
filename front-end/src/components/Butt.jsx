@@ -7,7 +7,9 @@ const StyledButton = styled.button`
   height:${(props) => props.height || "50px"};
   padding: 6px 12px;
   border-radius: 8px;
-  font-size: 20px;
+  font-size: ${(props) => props.height || "20px"};
+  padding-top: 10px;
+  padding-bottom: 10px;
   line-height: 1.5;
   border: 1px solid lightgray;
   font-weight: bold;
@@ -15,6 +17,13 @@ const StyledButton = styled.button`
   color: ${(props) => props.color || "#FFFFFF"};
   background: ${(props) => props.background || "#5AC463"};
   cursor: ${(props) => props.cursor || ""};
+    
+        
+  &:hover {
+      background: ${(props) => props.hoverBackground || "#4CAF50"};
+      color: ${(props) => props.hoverColor || "#FFFFFF"};
+      cursor: pointer;
+  }
   
   ${(props) =>
     props.media &&

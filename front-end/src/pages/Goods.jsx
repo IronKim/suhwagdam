@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import { PlusOutlined } from '@ant-design/icons';
-import { DatePicker, TimePicker, Input, Form, Upload } from 'antd';
+import { DatePicker, TimePicker, Form, Upload, Radio } from 'antd';
 import styled from "styled-components";
 import Butt from '../components/Butt'
 import dayjs from 'dayjs';
 import sweet from 'sweetalert2'; 
 import { TbPhotoPlus } from "react-icons/tb";
+import { postGoods } from '../../src/api/GoodsApiService';
 
     const InnerDiv = styled.div`
         /* border: 1px solid red; */
@@ -94,17 +94,6 @@ import { TbPhotoPlus } from "react-icons/tb";
         width: 80%;
         height: auto;
     `
-    // const UploaDiv = styled.div`
-    //     && {
-    //         height: 47px;
-    //         width: 150px;
-
-    //         &:hover{
-    //             border: 1px solid #5AC463;
-    //             outline: none;
-    //         }
-    //     }
-    // `
     const StyledUpload = styled(Upload)`
         
         .ant-upload:hover {
@@ -146,45 +135,34 @@ import { TbPhotoPlus } from "react-icons/tb";
             border: 1px solid #5AC463 !important; 
         }
     `
-    ///////////
-    
-
-    const normFile = (e) => {
-        if (Array.isArray(e)) {
-            return e;
-        }
-        return e?.fileList;
-    };
-    ///////////////////////////////////////////////////////////////////////////////////////////////
     const Goods  = () => {
 
-        const [productDTO, setProductDTO] = useState({
-            code:1,
-            seq:'',
-            // user_seq: userSeq,
-            title: '',      //제목
+        const [goodsDTO, setGoodsDTO] = useState({
+            title: '',      
             description:'',
-            image: '',  //시작날짜
-            starting_price: '',    //끝나는날짜
-            current_bid_price: '',    //내용
-            deadline: '',       //모집인원  
-            created_at: '',
-            created_by: ''
+            categoryId: '',  
+            startingPrice: '',   
+            deadline:'',  
+            images: [],   
         });
-        const{code,
-            seq,user_seq,title,description,image,starting_price,deadline,endDate,created_at,created_by
-        } = productDTO
-        
+        const{title,description,categoryId,startingPrice,deadline,images
+        } = goodsDTO
+
+        const [endDate, setEndDate] = useState(dayjs().format('YYYY-MM-DD'))
+        const [endTime, setEndTime] = useState('')
+        const [goodsimages, setGoodsimages] = useState([])
+        const [clientPrice, setClientPrice] = useState('')
         const [titleDiv, setTitleDiv] = useState('')
+        const [cateDiv, setCateDiv] = useState('')
         const [descriptionDiv, setDescriptionDiv] = useState('')
         const [imageDiv, setImageDiv] = useState('')
         const [starting_priceDiv, setStarting_priceDiv] = useState('')
         const [endDateDiv, setEndDateDiv] = useState('')
         const [deadlineDiv, setDeadlineDiv] = useState('')
         
-        const productSave = (e) => {
+        const productSave = async (e) => {
             e.preventDefault()
-    
+
             var sw = 1
             if(!title){
                 setTitleDiv('제목을 입력하세요')
@@ -192,19 +170,25 @@ import { TbPhotoPlus } from "react-icons/tb";
             }else {
                 setTitleDiv('')
             }
+            if(!categoryId){
+                setCateDiv('카테고리를 선택하세요')
+                sw=0
+            }else {
+                setCateDiv('')
+            }
             if(!description){
                 setDescriptionDiv('설명을 입력하세요')
                 sw=0
             }else {
                 setDescriptionDiv('')
             }
-            if(!image){
+            if(!goodsimages.length){
                 setImageDiv('이미지를 등록하세요')
                 sw=0
             }else {
                 setImageDiv('')
             }
-            if(!starting_price){
+            if(!clientPrice){
                 setStarting_priceDiv('시작 금액을 입력하세요')
                 sw=0
             }else {
@@ -216,42 +200,83 @@ import { TbPhotoPlus } from "react-icons/tb";
             }else {
                 setEndDateDiv('')
             }
-            if(!deadline){
+            if(!endTime){
                 setDeadlineDiv('판매종료 시간을 입력하세요')
                 sw=0
             }else {
                 setDeadlineDiv('')
             }
             if(sw === 1){
-                sweet.fire({
-                    title: "등록이 완료되었습니다.",
-                    icon: "success"
-                })
+                const deadline = `${endDate}T${dayjs(endTime, 'HH:mm:ss').format('HH:mm:ss')}`;
+
+                setGoodsDTO(prevState => ({
+                    ...prevState,
+                    deadline: deadline
+                }));
+                try {
+                    const res = await postGoods({
+                        ...goodsDTO,
+                        deadline: deadline
+                    });
+                    sweet.fire({
+                        title: "등록이 완료되었습니다.",
+                        icon: "success"
+                    });
+    
+                } catch (error) {
+                    console.error('등록 실패', error);
+                }
             }
         }
 
     const onInput = (e) => {
         if(e && e.target){
             const {name, value} = e.target
-            setProductDTO({...productDTO, [name]: value})
+            setGoodsDTO({...goodsDTO, [name]: value.slice(0,30)})
+        }
+    }
+    const onInputTA = (e) => {
+        if(e && e.target){
+            const {name, value} = e.target
+            setGoodsDTO({...goodsDTO, [name]: value.slice(0,100)})
         }
     }
     const onInputDate = (date, dateString, fieldName) => {
-        setProductDTO({ ...productDTO, [fieldName]: dateString })
+        if (fieldName === 'endDate') {
+            setEndDate(dateString); 
+        }
+        if (fieldName === 'endTime') {
+            setEndTime(date.format('HH:mm:ss') );
+        }
+        
     }
     const starting_priceHand = (e) => {
-        let starting_price = e.target.value;
-        starting_price = Number(starting_price.replaceAll(',',''));
-        if(isNaN(starting_price)){
-            setProductDTO({...productDTO, starting_price: '0'});
+        let clientPrice = e.target.value;
+    
+        clientPrice = Number(clientPrice.replaceAll(',',''));
+
+        if(isNaN(clientPrice)){
+            setClientPrice('0');
         }else{
-            setProductDTO({ ...productDTO, starting_price: starting_price.toLocaleString('ko-KR') });
+            setClientPrice(clientPrice.toLocaleString('ko-KR'));
+            setGoodsDTO({ ...goodsDTO, startingPrice: clientPrice });
         }
     }
     const starting_priceFocus = () => {
-            setProductDTO({ ...productDTO, starting_price:'' });
+        setClientPrice('');
     }
-    
+    const onFileChange = (e) => {
+        const fileList = normFile(e);
+        const blobUrls = fileList.map(file => URL.createObjectURL(file.originFileObj));
+        setGoodsimages(fileList); // 이미지 파일 목록 저장
+        setGoodsDTO({ ...goodsDTO, images: blobUrls }); // Blob URL 저장
+    };
+    const normFile = (e) => {
+        if (Array.isArray(e)) {
+            return e;
+        }
+        return e?.fileList;
+    };
     /////////////
 
     const PickerWithType = ({onChange }) => {
@@ -263,48 +288,44 @@ import { TbPhotoPlus } from "react-icons/tb";
     return (
         <div>
             <InnerDiv>
-                <NameDiv><h1 style={{marginLeft:'20px'}}>상품등록</h1></NameDiv>
+                <NameDiv><h1 style={{marginLeft:'20px',  fontSize: '35px'}}>상품등록</h1></NameDiv>
             <ContentDiv>
+                <Form>
                 <StyledCate>
                     <StyledCateTitle>상품 사진</StyledCateTitle>
                     <StyledCateCon>
-                        <div valuePropName="fileList" getValueFromEvent={normFile}>
+                        <Form.Item name="goodsimages" valuePropName="fileList" getValueFromEvent={normFile}>
                             <StyledUpload listType="picture-card"
-                                    name="image" value={image} 
-                                    onChange={(e) => setProductDTO({ ...productDTO, image: normFile(e) })} 
-                                    
-                                    
-                    //              showUploadList={{
-                    //             showPreviewIcon: true,
-                    //             showRemoveIcon: true,
-                    //             showDownloadIcon: false,
-                    //             removeIcon: <div />,
-                    //            }}
+                                    name="goodsimages" fileList={goodsimages} 
+                                    onChange={onFileChange} 
                             >
-                            {productDTO.image.length < 5 && (
+                            {goodsimages.length < 5 && (
                                         <div style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                                             <TbPhotoPlus style={{ width: '80%', height: '80%', opacity: 0.7 }} />
                                         </div>
                             )}
-                                {/* <Upload style={{ width: '100%', height: '100%', 
-                                            display: 'flex', justifyContent: 'center', 
-                                            alignItems: 'center'
-                                            }}>
-                                    <TbPhotoPlus style={{ width: '80%', height: '80%', opacity: 0.7}} />
-                                </Upload> */}
-                                {/* <TbPhotoPlus style={{ width: '80%', height: '80%', opacity: 0.7}} /> */}
                             </StyledUpload>
                             <EffectDiv>{imageDiv}</EffectDiv>
-                        </div>
+                        </Form.Item>
                     </StyledCateCon>
                 </StyledCate>
 
                 <StyledCate>
                     <StyledCateTitle>제목</StyledCateTitle>
                     <StyledCateCon>
-                        <StyledInput placeholder='품목명과 무게를 포함하여 지어주세요.'
+                        <StyledInput maxLength={50} placeholder='품목명과 무게를 포함하여 지어주세요.'
                                     type="text" name="title" value={title} onChange={onInput} />
                         <EffectDiv>{titleDiv}</EffectDiv>
+                    </StyledCateCon>
+                </StyledCate>
+                <StyledCate>
+                    <StyledCateTitle>상품 카테고리</StyledCateTitle>
+                    <StyledCateCon>
+                        <Radio.Group name = "categoryId" onChange={e => setGoodsDTO({ ...goodsDTO, categoryId: e.target.value })} value={categoryId}>
+                            <Radio value="100" style={{fontSize:'15px'}}> 농산물 </Radio>
+                            <Radio value="200" style={{fontSize:'15px'}}> 수산물 </Radio>
+                        </Radio.Group>          
+                        <EffectDiv>{cateDiv}</EffectDiv>
                     </StyledCateCon>
                 </StyledCate>
                 
@@ -312,7 +333,7 @@ import { TbPhotoPlus } from "react-icons/tb";
                     <StyledCateTitle>판매 시작액</StyledCateTitle>
                     <StyledCateCon>
                     <StyledInput type='text' placeholder='숫자만 입력해 주세요.'
-                                 name="starting_price" value={starting_price} 
+                                 name="clientPrice" value={clientPrice} 
                                  onChange={starting_priceHand} onFocus={starting_priceFocus}
                                  />
                     <EffectDiv>{starting_priceDiv}</EffectDiv>
@@ -335,9 +356,9 @@ import { TbPhotoPlus } from "react-icons/tb";
                 <StyledCate>
                     <StyledCateTitle>판매 종료 시간</StyledCateTitle>
                     <StyledCateCon>
-                        <StyledTimePicker name="deadline"
-                                        value={deadline ? dayjs(deadline, 'HH:mm:ss') : null}
-                                        onChange={(time, timeString) => onInputDate(time, timeString, 'deadline')}
+                        <StyledTimePicker name="endTime"
+                                        value={endTime ? dayjs(endTime, 'HH:mm:ss') : null}
+                                        onChange={(time, timeString) => onInputDate(time, timeString, 'endTime')}
                                         />
                         <EffectDiv>{deadlineDiv}</EffectDiv>
                     </StyledCateCon>
@@ -346,14 +367,15 @@ import { TbPhotoPlus } from "react-icons/tb";
                 <StyledCate height="150px">
                     <StyledCateTitle>상품 설명</StyledCateTitle>
                     <StyledCateCon>
-                        <StyledTA maxLength={50} rows={4} placeholder='최대 50자' 
-                        type="text" name="description" value={description} onChange={onInput}/>
+                        <StyledTA rows={4} placeholder='최대 100자' 
+                        type="text" name="description" value={description} onChange={onInputTA}/>
                         <EffectDiv>{descriptionDiv}</EffectDiv>
                     </StyledCateCon>
                 </StyledCate>
                     <div style={{width:'100%', textAlign: 'center'}}>
-                    <Butt cursor="pointer" onClick={productSave}>회원가입</Butt> 
+                    <Butt cursor="pointer" onClick={productSave}>상품등록</Butt> 
                     </div>
+                </Form>
             </ContentDiv>
             </InnerDiv>
             

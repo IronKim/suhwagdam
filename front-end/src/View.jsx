@@ -8,10 +8,10 @@ import {getGoodsList} from "./api/GoodsApiService";
 import {useRecoilState} from "recoil";
 import {goodsState} from "./atoms/goodsState";
 import Main from "./pages/Main";
-import {connectWebSocket} from "./webSocket/WebSocketClient";
-import {subscribeToGoodsUpdates} from "./webSocket/Subscribe";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import {subscribeToGoodsUpdates} from "./webSocket/Subscribe";
+import Confirm from "./pages/Confirm";
 
 const View = () => {
 
@@ -30,10 +30,12 @@ const View = () => {
     useEffect(() => {
         // 초기 상품 목록 조회
         initGoodsList();
-        // 웹소켓 연결 설정
-        connectWebSocket();
+        // 상품 업데이트 구독
+        const sub = subscribeToGoodsUpdates(setGoodsList);
 
-        subscribeToGoodsUpdates(setGoodsList);
+        return () => {
+            sub.then(s => s.unsubscribe());
+        }
     }, []);
 
 
@@ -47,6 +49,7 @@ const View = () => {
                     <Route path={'/join'} element={<Join />} />
                     <Route path={'/goods-register'} element={<Goods />} />
                     <Route path={'/goods/:goodsSeq'} element={<Detail />} />
+                    <Route path={'/confirm'} element={<Confirm />} />
                 </Routes>
                 <Footer />
             </BrowserRouter>

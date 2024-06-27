@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Transactional
@@ -30,6 +31,10 @@ public class BidService {
 
         // TODO: 판매자나 마지막 입찰자가 입찰을 할 수 없도록 처리
 
+        // TODO: 포인트 사용 처리, 포인트가 부족하면 입찰 불가능 처리, 전입찰자에게 포인트 반환 처리
+
+        // TODO: 알림 처리
+
         goods.updateCurrentBidPrice(request.getBidAmount());
 
         Goods updatedGoods = goodsRepository.save(goods);
@@ -42,6 +47,13 @@ public class BidService {
                         .build());
 
         return BidDto.fromEntity(bid);
+    }
+
+    @Transactional(readOnly = true)
+    public List<BidDto> getBidsByGoodsSeq(long goodsSeq) {
+        return bidRepository.findAllByGoodsSeqOrderByBidAmountDesc(goodsSeq).stream()
+                .map(BidDto::fromEntity)
+                .toList();
     }
 
     private UserAccount getUserEntityException(String accountId) {
