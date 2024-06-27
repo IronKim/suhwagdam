@@ -29,11 +29,11 @@ public class GoodsService {
     private final CategoryRepository categoryRepository;
 
     public GoodsDto create(GoodsCreateRequest request, String accountId) {
-        UserAccount userAccount = getUserEntityException(accountId);
+        UserAccount sellerAccount = getUserEntityException(accountId);
         Category category = findCategory(request.getCategoryId());
 
         Goods goods = goodsRepository.save(Goods.builder()
-                .userAccount(userAccount)
+                .seller(sellerAccount)
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .category(category)

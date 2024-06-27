@@ -18,9 +18,9 @@ public class Bid {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long seq;
 
-    @JoinColumn(name = "user_seq")
+    @JoinColumn(name = "participant_seq")
     @ManyToOne(optional = false)
-    private UserAccount userAccount;
+    private UserAccount participant;
 
     @JoinColumn(name = "goods_seq")
     @ManyToOne(optional = false)

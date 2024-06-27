@@ -40,7 +40,7 @@ public class BidService {
         Goods updatedGoods = goodsRepository.save(goods);
 
         Bid bid = bidRepository.save(Bid.builder()
-                        .userAccount(userAccount)
+                        .participant(userAccount)
                         .goods(updatedGoods)
                         .bidAmount(request.getBidAmount())
                         .bidTime(LocalDateTime.now())

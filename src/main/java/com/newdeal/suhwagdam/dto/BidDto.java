@@ -21,7 +21,7 @@ public class BidDto {
         return new BidDto(
                 bid.getSeq(),
                 GoodsDto.fromEntity(bid.getGoods()),
-                UserAccountDto.fromEntity(bid.getUserAccount()),
+                UserAccountDto.fromEntity(bid.getParticipant()),
                 bid.getBidAmount(),
                 bid.getBidTime()
         );

@@ -29,7 +29,7 @@ public class Goods {
 
     @ManyToOne
     @JoinColumn(name = "seller_seq", nullable = false)
-    private UserAccount userAccount;
+    private UserAccount seller;
 
     @Column(nullable = false)
     private String title;
@@ -79,7 +79,7 @@ public class Goods {
     public static Goods fromDto(GoodsDto goodsDto) {
         return Goods.builder()
                 .seq(goodsDto.getSeq())
-                .userAccount(UserAccount.fromDto(goodsDto.getUserAccountDto()))
+                .seller(UserAccount.fromDto(goodsDto.getUserAccountDto()))
                 .title(goodsDto.getTitle())
                 .description(goodsDto.getDescription())
                 .category(goodsDto.getCategory())

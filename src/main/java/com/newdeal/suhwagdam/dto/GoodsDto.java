@@ -31,7 +31,7 @@ public class GoodsDto {
     public static GoodsDto fromEntity(Goods goods) {
         return new GoodsDto(
                 goods.getSeq(),
-                UserAccountDto.fromEntity(goods.getUserAccount()),
+                UserAccountDto.fromEntity(goods.getSeller()),
                 goods.getCategory(),
                 goods.getTitle(),
                 goods.getDescription(),
