@@ -10,8 +10,10 @@ import {goodsState} from "./atoms/goodsState";
 import Main from "./pages/Main";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import List from './pages/List';
 import {subscribeToGoodsUpdates} from "./webSocket/Subscribe";
 import Confirm from "./pages/Confirm";
+
 
 const View = () => {
 
@@ -38,13 +40,13 @@ const View = () => {
         }
     }, []);
 
-
     return (
         <div>
             <BrowserRouter>
                 <Header />
                 <Routes>
                     <Route path={'/'} element={<Main />} />
+                    <Route path={'/list/:state'} element={<List />} />
                     <Route path={'/login'} element={<Login />} />
                     <Route path={'/join'} element={<Join />} />
                     <Route path={'/goods-register'} element={<Goods />} />
@@ -56,5 +58,4 @@ const View = () => {
         </div>
     );
 };
-
 export default View;
