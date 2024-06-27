@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import sweet from 'sweetalert2'; 
 import { TbPhotoPlus } from "react-icons/tb";
 import { postGoods } from '../../src/api/GoodsApiService';
+import { useNavigate } from 'react-router-dom';
 
     const InnerDiv = styled.div`
         /* border: 1px solid red; */
@@ -159,6 +160,7 @@ import { postGoods } from '../../src/api/GoodsApiService';
         const [starting_priceDiv, setStarting_priceDiv] = useState('')
         const [endDateDiv, setEndDateDiv] = useState('')
         const [deadlineDiv, setDeadlineDiv] = useState('')
+        const navigate = useNavigate()
         
         const productSave = async (e) => {
             e.preventDefault()
@@ -222,7 +224,7 @@ import { postGoods } from '../../src/api/GoodsApiService';
                         title: "등록이 완료되었습니다.",
                         icon: "success"
                     });
-    
+                    navigate('/');
                 } catch (error) {
                     console.error('등록 실패', error);
                 }

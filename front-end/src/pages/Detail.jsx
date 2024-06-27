@@ -1,22 +1,20 @@
-// import { Footer, Header } from 'antd/es/layout/layout';
-import React, {useState}from 'react';
+import React, {useState, useEffect}from 'react';
 import styled from "styled-components";
 import Butt from '../components/Butt'
+import RelatedGoods from '../components/RelatedGoods'
+import Carousel from '../components/Carousel'
 import { Modal } from 'antd';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { useRecoilValue} from 'recoil';
+import { goodsState } from '../atoms/goodsState';
+import { postbid } from '../../src/api/BidApiService';
+import { getBidsBygoodsSeq } from '../../src/api/BidApiService';
+import sweet from 'sweetalert2'; 
+import { subscribeToBidUpdates } from '../webSocket/Subscribe';
+import {useParams} from "react-router-dom";
+import { calculateTimeDifference } from '../hook/time';
+import { numberFormat } from '../utils/formating';
 
-const data = [
-  {
-    name: '진행 금액',pv: 3400, amt: 2400,
-  },
-  {
-    name: '진행시간',pv: 1000, amt: 2210,
-  },
-  {
-    name: '아무이름',pv: 1000, amt: 2210,
-  },
-  // 데이터넣자
-];
 
 const BaseDiv = styled.div`
 /* border: 1px solid red; */
@@ -44,14 +42,9 @@ const HDiv = styled.div`
 `;
 
 const ImgDiv = styled.div`
- /* border: 1px solid red; */
+ /* border: 1px solid darkblue; */
   width: 40%;
   height:100%;
-    img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
     @media (max-width: 700px) {
       width: 100%;
       height:30%;
@@ -76,10 +69,7 @@ const TitleDiv = styled.div`
   height:10%;
   margin: auto;
   box-sizing: border-box;
-  @media (max-width: 700px){
-    display : flex;
-    align-items : center;
-  }
+  
 `;
 
 const ConDiv = styled.div`
@@ -87,9 +77,16 @@ const ConDiv = styled.div`
   background: #FFFEF8;
   width: 80%;
   height:30%;
-  font-size: 18px;
+  font-size: 25px;
   color: #616060;
   margin: auto;
+  @media (max-width: 700px){
+    font-size: 18px;
+    padding-top: 10px;
+    height: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 `;
 
 const TimeDiv = styled.div`
@@ -137,10 +134,13 @@ const BtnDiv = styled.div`
   display: flex;
   align-items : center;
   justify-content : center;
-  
+  @media (max-width: 700px){
+   
+  }
 `;
 const BtnInner = styled.div`
   /* border: 1px solid blue; */
+  height: 80%;
   background: #FFFEF8;
   width: 45%;
   text-align: center;
@@ -164,10 +164,13 @@ const GraphDiv = styled.div`
   display: flex;
   @media (max-width: 899px) {
     font-size: 20px;
+    height: 230px;
+    margin-top:10px;
+    font-size: 10px;
   }
 `;
 const Graph = styled.div`
-  /* border: 1px solid red;      */
+  /* border: 1px solid red; */
   height: 100%;
   width: 95%;
   background-color: white;
@@ -178,13 +181,19 @@ const ActionText = styled.div`
   text-align: center;
   color: #5AC463;
   font-weight: bold;
+  @media (max-width: 899px) {
+    margin-top:10px;
+  }
 `
 
 const FootDiv = styled.div`
-border: 1px solid orange;
+/* border: 1px solid orange; */
   width: 100%;
   height: 200px;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  /* overflow: hidden; */
 `;
 
 const StyledModal = styled(Modal)`
@@ -258,104 +267,192 @@ const MBtnInner = styled.div`
   /* border: 1px solid pink; */
   width: 50%;
 `;
-/////////////////////////////////////////////////////////////////////////////////////
+
 const Detail = () => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const showModal = () => {
-      setIsModalOpen(true);
-    };
+  const dataList = useRecoilValue(goodsState); //아톰이
+  const params = useParams();
 
-    const handleOk = () => {
-      setIsModalOpen(false);
-    };
+  const seq = params.goodsSeq;
 
-    const handleCancel = () => {
-      setIsModalOpen(false);
-    };
+  const detailGoods = dataList.find(goods => goods.seq === Number(seq));
+  
+  const [time, setTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
+  
+    
+//시간
+  useEffect(() => {
+    if (detailGoods) {
+      const deadlineDate = new Date(detailGoods?.deadline);
+      setTime(calculateTimeDifference(deadlineDate));
 
-    const [curBidPrice, setCurbidPrice] = useState('');
+      const interval = setInterval(() => {
+        setTime(calculateTimeDifference(deadlineDate));
+      }, 1000);
 
-    const curBidPriceHand = (e) => {
-      let curBidPrice = e.target.value;
-      curBidPrice = Number(curBidPrice.replaceAll(',',''));
-      if(isNaN(curBidPrice)){
-        setCurbidPrice(0);
-      }else{
-        setCurbidPrice(curBidPrice.toLocaleString('ko-KR'));
+      return () => clearInterval(interval);
+    }
+  }, [detailGoods]);
+
+//경매상품 입찰정보
+  const [bids, setBids] = useState([]);
+
+    useEffect(() => {
+      getBidsBygoodsSeq(params.goodsSeq)
+          .then(response => {
+              setBids(response.data.result);
+          })
+          .catch(error => {
+              console.error('에러:', error);
+          })
+      const sub = subscribeToBidUpdates(params.goodsSeq, setBids);
+      return () => {
+          sub.then(s => s.unsubscribe());
       }
+
+  }, [params.goodsSeq]);
+//경매모달
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [bidDTO, setBidDTO] = useState({
+    goodsSeq: '',      
+    bidAmount:''
+  });
+  const [bidAmount, setBidAmount] = useState('');
+
+  const showModal = (seq) => {
+    setBidDTO({ ...bidDTO, goodsSeq: seq });
+    setIsModalOpen(true);
+  };
+  const bidAmountFocus = () => {
+    setBidAmount('');
+  }
+
+  const bidAmountHand = (e) => {
+    let bidAmount = e.target.value;
+    bidAmount = Number(bidAmount.replaceAll(',',''));
+    if(isNaN(bidAmount)){
+      setBidAmount(0);
+    }else{
+      setBidAmount(numberFormat(bidAmount));
     }
-    const curBidPriceFocus = () => {
-      setCurbidPrice('');
+  }
+  
+  const bidOk = () => {
+    setIsModalOpen(false);
+    const price = bidAmount.replaceAll(',','');
+    postbid ({
+      goodsSeq: detailGoods.seq,
+      bidAmount: price
+    })
+    .then(res => {
+      console.log(res)
+      sweet.fire({
+              text: "입찰성공",
+              icon: "success"
+            });
+          })
+    .catch(e => {
+      console.log(e)
+      sweet.fire({
+        text: "현재 가격보다 높은 금액으로 입찰해주세요.",
+        icon: "warning",
+      });
+    })
+    setBidAmount('')
+  };
+  const bidCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  // 그래프
+  const data = bids.sort(
+    (a, b) => new Date(a.bidTime) - new Date(b.bidTime)
+  ).slice(-10)
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div style={{ backgroundColor: 'white', padding: '5px', border: '1px solid #ccc', color:'#8884d8' }}>
+          <p>{`닉네임: ${payload[0].payload.userAccountResponse.nickname}`}</p>
+          <p>{`입찰가격: ${numberFormat(payload[0].payload.bidAmount)}원`}</p>
+        </div>
+      );
     }
 
-
+    return null;
+  };
     return (
         <div style={{width:'100%'}}>
             <BaseDiv>
                 <HDiv>
-                    <ImgDiv>
-                        <img src='https://shop-phinf.pstatic.net/20230616_83/1686882884732XWOxI_JPEG/10805132545701427_432852016.jpg?type=m510'></img>
-                    </ImgDiv>
+                  <ImgDiv>
+                  <Carousel images={detailGoods && detailGoods.images} />
+                  </ImgDiv>
                     <ContextDiv>
                         <TitleDiv>
-                            <h2>무화과 1KG</h2>
+                            <h2 style={{fontSize:'30px',marginTop:'20px'}}>{detailGoods?.title}</h2>
                         </TitleDiv>
-                        <ConDiv> 가족들끼리 다 못나눠 먹을것 같아서 올립니다.
-                        당도 높고 맛있는데 껍질이 예쁘지 않아요.</ConDiv>
-                        <TimeDiv><TimeT>마감까지</TimeT><TimeT2>0일 00시간 00분 00초</TimeT2></TimeDiv>
+                        <ConDiv>{detailGoods?.description}</ConDiv>
+                        <TimeDiv><TimeT>마감까지</TimeT><TimeT2>{time.hours}시간 {time.minutes}분 {time.seconds}초</TimeT2></TimeDiv>
                         <BtnDiv>
                           <BtnInner><Butt background='#FFFEF8'color='#616060' width="98%" height="100%"
-                                      fontSize="20px" media="true">
-                            현재 가격&nbsp;:&nbsp;<Pricespan>100</Pricespan>원</Butt></BtnInner>
-                          <BtnInner><Butt cursor="pointer" width="98%" height="100%" onClick={() => setIsModalOpen(true)}>입찰</Butt></BtnInner>
+                                       media="true">
+                            현재 가격&nbsp;:&nbsp;<Pricespan>{numberFormat(detailGoods?.currentBidPrice)}</Pricespan>원</Butt></BtnInner>
+                          <BtnInner>
+                            <Butt 
+                            cursor="pointer" width="98%" height="100%" 
+                            onClick={() => showModal(detailGoods?.seq)}>입찰</Butt></BtnInner>
                         </BtnDiv>
                         <GraphDiv>
                           <Graph>
-                            <LineChart width={730} height={250} data={data}
+                          <ResponsiveContainer width={'100%'} height={250}>
+                            <LineChart data={data}
                               margin={{ top: 15, right: 80, bottom: 5 }}>
                               <CartesianGrid strokeDasharray="3 3" />
-                              <XAxis dataKey="name" />
+                              <XAxis dataKey={'none'}/>
                               <YAxis />
-                              <Tooltip />
-                              {/* <Legend /> */}
-                              <Line type="monotone" dataKey="pv" stroke="#8884d8" />
+                              <Tooltip content={<CustomTooltip />} /> 
+                              <Line type="monotone" name="입찰가격" dataKey="bidAmount" stroke="#8884d8" />
                             </LineChart>
+                            </ResponsiveContainer>
                           </Graph>
                         </GraphDiv>
                         <ActionText>경매현황</ActionText>
                     </ContextDiv>
                 </HDiv>
 
-                <div style={{border: '', width:'100%', height:'30px', display: 'flex'}}>
-                    ---------------------
+                <div style={{width:'80%',height:'60px', display: 'flex', margin:'auto'}}>
+                    <div style={{border:'1px solid #D0CFCF', width:'100%',margin:'auto'}}></div>
                 </div>
-                
+                <p style={{marginBottom:'20px', color:'#404040', 
+                          fontSize:'18px'}}>다른상품</p>
                 <FootDiv>
-                    dd
+                  <RelatedGoods currentGoodsSeq={Number(params.goodsSeq)} />
                 </FootDiv>
-            <StyledModal open={isModalOpen}
-              onCancel={handleCancel}
+            <StyledModal 
+              open={isModalOpen}
+              onCancel={bidCancel}
               footer={[
                 <MBtn key="footer">
                 <MBtnInner>
-                <Butt key="back" onClick={handleCancel} width='98%' background='#FFFFFF' color='404040'>
+                <Butt key="back" onClick={bidCancel} width='98%' background='#FFFFFF' color='404040'>
                   취소
                 </Butt>
                 </MBtnInner>
                 <MBtnInner>
-                <Butt key="submit" onClick={handleOk} width='98%'>
+                <Butt key="submit" cursor="pointer" onClick={bidOk} 
+                      width='98%'>
                   입찰
                 </Butt>
                 </MBtnInner>
                 </MBtn>
               ]}centered
               maskClosable={false} >
-              <Mheaed>남은 시간<TimeT2 background='none' width='auto' height='auto'>00시간00분</TimeT2></Mheaed>
-              <MNow>현재 가격&nbsp;&nbsp; <Pricespan>200000000000000000</Pricespan>원</MNow>
+              <Mheaed>남은 시간<TimeT2 background='none' width='auto' height='auto'>{time.hours}시간 {time.minutes}분 {time.seconds}초</TimeT2></Mheaed>
+              <MNow>현재 가격&nbsp;&nbsp; <Pricespan>{numberFormat(detailGoods?.currentBidPrice)}</Pricespan>원</MNow>
               <MInput>금액&nbsp;:&nbsp;<MInputInner type='text' 
-                                        value={curBidPrice} onChange={curBidPriceHand} 
-                                        onFocus={curBidPriceFocus} name="curBidPrice"></MInputInner>원</MInput>
+                                        value={bidAmount} onChange={bidAmountHand} 
+                                        onFocus={bidAmountFocus} name="bidAmount"></MInputInner>원</MInput>
             </StyledModal>
             </BaseDiv>
 
