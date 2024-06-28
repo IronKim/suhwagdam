@@ -15,6 +15,7 @@ public enum ErrorCode {
     GOODS_NOT_FOUND(HttpStatus.NOT_FOUND, "Goods not founded"),
     BID_NOT_FOUND(HttpStatus.NOT_FOUND, "Bid not founded"),
     ADDRESS_INFO_NOT_FOUND(HttpStatus.NOT_FOUND, "Address info not founded"),
+    ADDRESS_INFO_ALREADY_EXIST(HttpStatus.CONFLICT, "Address info already exist"),
     CATEGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "Category not founded"),
     INVALID_BID_AMOUNT(HttpStatus.BAD_REQUEST, "Bid amount is invalid"),
     INVALID_PERMISSION(HttpStatus.UNAUTHORIZED, "Permission is invalid"),
