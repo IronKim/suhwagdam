@@ -2,6 +2,7 @@ package com.newdeal.suhwagdam.domain;
 
 import com.newdeal.suhwagdam.domain.constant.RoleType;
 import com.newdeal.suhwagdam.dto.UserAccountDto;
+import com.newdeal.suhwagdam.dto.request.UserAccountUpdateRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -32,6 +33,12 @@ public class UserAccount {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoleType roleType;
+
+    public void update(String password, String email, String nickname) {
+        this.password = password;
+        this.email = email;
+        this.nickname = nickname;
+    }
 
     public static UserAccount fromDto(UserAccountDto userAccountDto) {
         return UserAccount.builder()
