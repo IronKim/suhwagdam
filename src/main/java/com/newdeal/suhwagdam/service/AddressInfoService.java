@@ -22,6 +22,12 @@ public class AddressInfoService {
     private final UserAccountRepository userAccountRepository;
 
     public void create(AddressInfoCreateRequest request) {
+        long count = addressInfoRepository.count();
+
+        if(count > 0) {
+            throw new SuhwagdamApplicationException(ErrorCode.ADDRESS_INFO_ALREADY_EXIST, "Address info already exist");
+        }
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         UserAccount userAccount = getUserEntityException(authentication.getName());
