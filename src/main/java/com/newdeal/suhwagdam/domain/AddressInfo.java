@@ -42,5 +42,21 @@ public class AddressInfo {
                 .detailedAddress(addressInfoDto.getDetailedAddress())
                 .build();
     }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setNumber(String number) {
+        this.number = number;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public void setDetailedAddress(String detailedAddress) {
+        this.detailedAddress = detailedAddress;
+    }
+
 
 }

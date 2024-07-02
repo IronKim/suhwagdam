@@ -193,7 +193,7 @@ const MyPage = () => {
                 <Info click={infoClick} onClick={infoOn}>정보 수정</Info>
                 <Address click={addressClick} onClick={addressOn}>배송지 관리</Address>
                 <Goods click={goodsClick} onClick={goodsOn}>상품 관리</Goods>
-                <Auction click={auctionClick} onClick={auctionOn}>경매 내역</Auction>
+                <Auction click={auctionClick} onClick={auctionOn}>참여한 경매 내역</Auction>
                 <Bid click={bidClick} onClick={bidOn}>낙찰 내역</Bid>
             </ToggleDiv>
         </MyPageInner>

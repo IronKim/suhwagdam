@@ -1,4 +1,3 @@
-import { Button } from 'antd';
 import React from 'react';
 import styled, { css } from "styled-components";
 
@@ -20,9 +19,9 @@ const StyledButton = styled.button`
     
         
   &:hover {
-      background: ${(props) => props.hoverBackground || "#4CAF50"};
-      color: ${(props) => props.hoverColor || "#FFFFFF"};
-      cursor: pointer;
+      /* background: ${(props) => props.hoverBackground || "#4CAF50"};
+      color: ${(props) => props.hoverColor || "#FFFFFF"}; */
+      
   }
   
   ${(props) =>
@@ -32,6 +31,12 @@ const StyledButton = styled.button`
         font-size: 18px;
       }
     `}
+  ${props => props.disabled && css`
+    background-color: #D0CFCF;
+    color: #404040;
+    border: 1px solid #D0CFCF;
+    cursor: not-allowed;
+  `}
 `;
 
 const Butt = ({children, ...props}) => {

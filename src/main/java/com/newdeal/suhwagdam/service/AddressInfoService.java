@@ -9,6 +9,9 @@ import com.newdeal.suhwagdam.exception.SuhwagdamApplicationException;
 import com.newdeal.suhwagdam.repository.AddressInfoRepository;
 import com.newdeal.suhwagdam.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Optional;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,24 +25,28 @@ public class AddressInfoService {
     private final UserAccountRepository userAccountRepository;
 
     public void create(AddressInfoCreateRequest request) {
-        long count = addressInfoRepository.count();
-
-        if(count > 0) {
-            throw new SuhwagdamApplicationException(ErrorCode.ADDRESS_INFO_ALREADY_EXIST, "Address info already exist");
-        }
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
         UserAccount userAccount = getUserEntityException(authentication.getName());
 
-        addressInfoRepository.save(AddressInfo.builder()
-                .user(userAccount)
-                .name(request.getName())
-                .number(request.getNumber())
-                .address(request.getAddress())
-                .detailedAddress(request.getDetailedAddress())
-                .build()
-        );
+        Optional<AddressInfo> existingAddressInfoOptional = addressInfoRepository.findByUser(userAccount);
+        
+        if (existingAddressInfoOptional.isPresent()) {
+            AddressInfo existingAddressInfo = existingAddressInfoOptional.get();
+            existingAddressInfo.setName(request.getName());
+            existingAddressInfo.setNumber(request.getNumber());
+            existingAddressInfo.setAddress(request.getAddress());
+            existingAddressInfo.setDetailedAddress(request.getDetailedAddress());
+            addressInfoRepository.save(existingAddressInfo); 
+        } else {
+            AddressInfo newAddressInfo = AddressInfo.builder()
+                    .user(userAccount)
+                    .name(request.getName())
+                    .number(request.getNumber())
+                    .address(request.getAddress())
+                    .detailedAddress(request.getDetailedAddress())
+                    .build();
+            addressInfoRepository.save(newAddressInfo); 
+        }
     }
 
     public AddressInfoDto getAddressInfo() {

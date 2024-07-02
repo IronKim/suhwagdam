@@ -106,7 +106,7 @@ const loginInput = (e) => {
     const loginButton = () => {
         form.validateFields().then(() => {
             if (loginDTO.accountId && loginDTO.password){
-                
+              console.log(loginDTO)
                 login(loginDTO)
                   .then(res => {
                     console.log(res.data.result.token)

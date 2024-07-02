@@ -15,7 +15,6 @@ import {useParams} from "react-router-dom";
 import { calculateTimeDifference } from '../hook/time';
 import { numberFormat } from '../utils/formating';
 
-
 const BaseDiv = styled.div`
 /* border: 1px solid red; */
   width: 1200px;
@@ -278,16 +277,21 @@ const Detail = () => {
   const detailGoods = dataList.find(goods => goods.seq === Number(seq));
   
   const [time, setTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
-  
+  const [isTimeUp, setIsTimeUp] = useState(false);
     
 //시간
   useEffect(() => {
     if (detailGoods) {
       const deadlineDate = new Date(detailGoods?.deadline);
-      setTime(calculateTimeDifference(deadlineDate));
 
       const interval = setInterval(() => {
-        setTime(calculateTimeDifference(deadlineDate));
+        const timeDifference = calculateTimeDifference(deadlineDate);
+        setTime(timeDifference);
+
+        if (timeDifference.hours <= 0 && timeDifference.minutes <= 0 && timeDifference.seconds <= 0) {
+          setIsTimeUp(true);
+          clearInterval(interval);
+        }
       }, 1000);
 
       return () => clearInterval(interval);
@@ -307,7 +311,10 @@ const Detail = () => {
           })
       const sub = subscribeToBidUpdates(params.goodsSeq, setBids);
       return () => {
-          sub.then(s => s.unsubscribe());
+        sub.then(s => s.unsubscribe())
+         .catch(e => {
+          console.error('에러',e);
+         })
       }
 
   }, [params.goodsSeq]);
@@ -336,7 +343,6 @@ const Detail = () => {
       setBidAmount(numberFormat(bidAmount));
     }
   }
-  
   const bidOk = () => {
     setIsModalOpen(false);
     const price = bidAmount.replaceAll(',','');
@@ -353,16 +359,22 @@ const Detail = () => {
           })
     .catch(e => {
       console.log(e)
-      sweet.fire({
-        text: "현재 가격보다 높은 금액으로 입찰해주세요.",
-        icon: "warning",
-      });
+        sweet.fire({
+          text: "현재 가격보다 높은 금액으로 입찰해주세요.",
+          icon: "warning",
+        });
+      
     })
     setBidAmount('')
   };
   const bidCancel = () => {
     setIsModalOpen(false);
   };
+  useEffect(() => {
+    if (isModalOpen && isTimeUp) {
+      setIsModalOpen(false);
+    }
+  }, [isModalOpen, isTimeUp]);
 
   // 그래프
   const data = bids.sort(
@@ -399,7 +411,7 @@ const Detail = () => {
                                        media="true">
                             현재 가격&nbsp;:&nbsp;<Pricespan>{numberFormat(detailGoods?.currentBidPrice)}</Pricespan>원</Butt></BtnInner>
                           <BtnInner>
-                            <Butt 
+                            <Butt  disabled={isTimeUp}
                             cursor="pointer" width="98%" height="100%" 
                             onClick={() => showModal(detailGoods?.seq)}>입찰</Butt></BtnInner>
                         </BtnDiv>

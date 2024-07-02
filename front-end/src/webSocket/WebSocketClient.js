@@ -8,7 +8,7 @@ const connectWebSocket = () => {
     const socket = new SockJS('http://localhost:8080/ws');
     stompClient = Stomp.over(socket);
 
-    stompClient.debug = () => {}; // 디버그 로그 출력 방지
+    // stompClient.debug = () => {}; // 디버그 로그 출력 방지
 
     return new Promise((resolve, reject) => {
         stompClient.connect({}, () => {

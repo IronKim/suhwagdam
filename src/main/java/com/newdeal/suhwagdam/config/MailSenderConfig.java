@@ -1,6 +1,5 @@
 package com.newdeal.suhwagdam.config;
 
-import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,11 +37,10 @@ public class MailSenderConfig {
         props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
         props.put("mail.debug", "true");
 
-        try {
-            mailSender.testConnection();
-        } catch (MessagingException e) {
-            throw  new RuntimeException("Mail Server Connection Fail");
-        }
+		/*
+		 * try { mailSender.testConnection(); } catch (MessagingException e) { throw new
+		 * RuntimeException("Mail Server Connection Fail"); }
+		 */
 
         return mailSender;
     }

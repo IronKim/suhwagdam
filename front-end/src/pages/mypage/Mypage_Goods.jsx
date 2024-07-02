@@ -1,24 +1,30 @@
-import React from 'react';
+import React, {useState, useEffect}from 'react';
 import styled from "styled-components";
 import Butt from '../../components/Butt'
+import { useRecoilValue} from 'recoil';
+import { userState } from '../../atoms/userState';
+import { getMyGoodsList } from '../../api/GoodsApiService';
 
-const GoodsCard = styled.div`
-    /* border: 1px solid blue; */
+const Inner = styled.div`
     width: 70%;
-    height: 15%;
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    margin-bottom: 3%;
-    margin-top: 5%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     @media (max-width: 1000px){
         width: 90%;
         }
     @media (max-width: 639px){
         width: 99%;
         }
+`
+const GoodsCard = styled.div`
+    /* border: 1px solid blue; */
+    width: 100%;
+    height: 15%;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
 `
 const CardInner = styled.div`
     /* border: 1px solid red; */
@@ -77,22 +83,39 @@ const ButtDiv = styled.div`
     margin-left: auto;
 ` 
 const Mypage_Goods = () => {
+    const user = useRecoilValue(userState); //아톰이
+    console.log(user);
+    const [goodsList,setGoodsList] = useState([]);
+
+      useEffect(() => {
+        getMyGoodsList(user.accountId)
+        .then(res => {
+            console.log(res);
+            setGoodsList(res.data.result);
+                })
+          .catch(e => {
+            console.log(e);
+          })
+      }, []);
+      
     return (
         <div style={{height:'100%', display: 'flex', justifyContent:'center'}}>
-            {/* <Inner> */}
-                <GoodsCard>
+            <Inner>
+            {goodsList?.map((item, index) =>(
+                    <GoodsCard>
                     <CardInner>
-                    <GoodsPhoto><img src='https://shop-phinf.pstatic.net/20230616_83/1686882884732XWOxI_JPEG/10805132545701427_432852016.jpg?type=m510'></img></GoodsPhoto>
+                    <GoodsPhoto><img src='{item && item.images}'></img></GoodsPhoto>
                     <GoodsContext>
-                        <GoodsContextState>dd</GoodsContextState>
-                        <GoodsContextTitle>맛좋은 자두야 복숭아야 뭔지몰라</GoodsContextTitle>
-                        <GoodsContextPrice>현재 금액 : 원</GoodsContextPrice>
+                        <GoodsContextState>{item?.title}</GoodsContextState>
+                        <GoodsContextTitle>{item?.description}</GoodsContextTitle>
+                        <GoodsContextPrice>입찰 금액 :{item?.currentBidPrice} 원</GoodsContextPrice>
                     </GoodsContext>
                     <ButtDiv><Butt cursor="pointer" width="auto">배송</Butt> </ButtDiv>
                     </CardInner>
-                </GoodsCard>
-
-            {/* </Inner> */}
+                    </GoodsCard>
+            )
+            )}
+            </Inner>
         </div>
     );
 };
