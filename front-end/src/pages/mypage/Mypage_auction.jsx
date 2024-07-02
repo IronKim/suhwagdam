@@ -1,7 +1,20 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
 import Butt from '../../components/Butt'
+import { userState } from '../../atoms/userState';
+import { getAuctionList } from '../../api/GoodsApiService';
+import { useRecoilValue } from 'recoil';
+import { useInView } from 'react-intersection-observer';
 
+const Inner = styled.div`
+    width: 70%;
+    @media (max-width: 1000px){
+        width: 90%;
+        }
+    @media (max-width: 639px){
+        width: 99%;
+        }
+`
 const GoodsCard = styled.div`
     /* border: 1px solid blue; */
     width: 70%;
@@ -62,7 +75,6 @@ const GoodsContextTitle = styled.p`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    
 `
 const GoodsContextPrice = styled.p`
     /* border: 1px solid orange; */
@@ -77,19 +89,61 @@ const ButtDiv = styled.div`
     margin-left: auto;
 ` 
 const Mypage_auction = () => {
+    const user = useRecoilValue(userState);
+    const [auctionList, setAuctionList] = useState([]);
+    const accountId = user.accountId;
+
+    const { ref, inView } = useInView({ threshold: 0.5 }); // Infinite Scroll을 위한 useRef와 useInView hook
+    const prevInView = useRef(false); // useRef를 사용하여 이전 inView 값을 기억
+    const [listShow, setListShow] = useState(8); // 한 번에 보여줄 아이템 수
+
+    useEffect(() => {
+        if (accountId) {
+            getAuctionList(accountId)
+                .then((res) => {
+                    console.log('API response:', res.data);
+                    setAuctionList(res.data.result || res.data)
+                    
+                })
+                .catch((err) => {
+                    console.error('API error:', err); 
+                });
+        }
+    }, [accountId]);
+
+    useEffect(() => {
+        // Infinite Scroll을 위해 inView 값이 변경될 때마다 itemsShow 상태 업데이트
+        if (inView && !prevInView.current) {
+            setListShow(prevItems => prevItems + 8);
+        }
+        prevInView.current = inView;
+
+    }, [inView]);
+
+const showItems = auctionList.slice(0, listShow);
+
     return (
         <div style={{height:'100%', display: 'flex', justifyContent:'center'}}>
-           <GoodsCard>
-                <CardInner>
-                <GoodsPhoto><img src='https://shop-phinf.pstatic.net/20230616_83/1686882884732XWOxI_JPEG/10805132545701427_432852016.jpg?type=m510'></img></GoodsPhoto>
-                <GoodsContext>
-                    <GoodsContextState>dd</GoodsContextState>
-                    <GoodsContextTitle>맛좋은 자두야 복숭아야 뭔지몰라</GoodsContextTitle>
-                    <GoodsContextPrice>내가 입찰한 금액 : 원</GoodsContextPrice>
-                </GoodsContext>
-                <ButtDiv><Butt cursor="pointer" width="auto">배송</Butt> </ButtDiv>
-                </CardInner>
-            </GoodsCard>
+            <Inner>
+            {auctionList.length > 0 ? (
+               showItems.map((item, index) => (
+                    <GoodsCard key={index}>
+                        <CardInner>
+                        <GoodsPhoto><img src={item && item.images[0]} alt='auction img'></img></GoodsPhoto>
+                        <GoodsContext>
+                            <GoodsContextState>{item.title}</GoodsContextState>
+                            <GoodsContextTitle>{item.description}</GoodsContextTitle>
+                            <GoodsContextPrice>내가 입찰한 금액 : {item.currentBidPrice}원</GoodsContextPrice>
+                        </GoodsContext>
+                        <ButtDiv><Butt cursor="pointer" width="auto">배송</Butt> </ButtDiv>
+                        </CardInner>
+                    </GoodsCard>
+                ))
+           ) : (
+               <p>경매 목록이 없습니다.</p>
+           )}
+            </Inner>
+            <div ref={ref} /> {/* inView Scroll 생성 위치 */}
         </div>
     );
 };

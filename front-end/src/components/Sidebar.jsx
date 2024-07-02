@@ -1,5 +1,8 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { userState } from '../atoms/userState';
+import { useRecoilState } from 'recoil';
+import sweet from "sweetalert2";
 
 const SideContainer = styled.div` // 사이드바 전체 컨테이너 스타일
     display: none;
@@ -7,7 +10,7 @@ const SideContainer = styled.div` // 사이드바 전체 컨테이너 스타일
     @media (max-width: 639px) {
         border: 1px solid #D9D9D9;
         width: 100%;
-        height: 170px;
+        height: 100%;
         position: fixed;
         display: block;
         top: 0;
@@ -19,16 +22,27 @@ const SideContainer = styled.div` // 사이드바 전체 컨테이너 스타일
     }
 `;
 
-const NonMemberContainer = styled.div`
-    /* border: 1px solid blue; */
-    width: 100%;
-    height: 40px;
-    display: flex;
-    margin-top: 53px;
-    flex-direction: row;
-    justify-content: space-around;
-    font-size: 15px;
-    background-color: white;
+const NonMemberContainer = styled.div` // 로그인 정보 없을 때 : 없을 때
+    ${props => !props.accountId && `    
+        width: 100%;
+        height: 85px;
+        display: flex;
+        flex-direction: row;
+        margin-top: 230px;
+        justify-content: space-around;
+        font-size: 15px;
+        background-color: white;
+    `}
+    ${props => props.accountId && `
+        width: 100%;
+        height: 40px;
+        display: flex;
+        margin-top: 53px;
+        flex-direction: row;
+        justify-content: space-around;
+        font-size: 15px;
+        background-color: white;
+    `}
 `;
 
 const NonMember = styled.div`
@@ -40,6 +54,7 @@ const NonMember = styled.div`
     align-items: center;
     font-size: 25px;
     margin-left: 30px;
+    color: #404040;
     background-color: white;
 `;
 
@@ -55,19 +70,35 @@ const JoinDiv = styled.div`
     font-size: 25px;
 `;
 
-const LoginOutBtn = styled.button`
-    border: 1px solid #5AC463;
-    width: 300px;
-    height: 40px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 20px auto;
-    border-radius: 12px;
-    font-size: 15px;
-    outline: none;
-    color: white;
-    background-color: #5AC463;
+const LoginOutBtn = styled.button` // 로그인 정보 없을 때 : 있을 때
+    ${props => !props.accountId && `
+        border: 1px solid #5AC463;
+        width: 300px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 0 auto;
+        border-radius: 12px;
+        font-size: 15px;
+        outline: none;
+        color: white;
+        background-color: #5AC463;
+    `}
+    ${props => props.accountId && `
+        border: 1px solid #5AC463;
+        width: 300px;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px auto;
+        border-radius: 12px;
+        font-size: 15px;
+        outline: none;
+        color: white;
+        background-color: #5AC463;
+    `}
 `;
 
 const MypageContainer = styled.div`
@@ -93,23 +124,68 @@ const MypageMenu = styled.div`
 `;
 
 const Sidebar = ({ isOpen }) => {
- 
+    const [userData, setUserData] = useRecoilState(userState);
+    const accountId = userData.accountId;
+
+    const logout = () => {
+        sweet.fire({
+            icon: 'success',
+            title: '로그아웃 되었습니다.',
+            showConfirmButton: false,
+            timer: 1500
+
+        }).then(() => {
+
+            localStorage.removeItem('suhwagdamToken');
+            sessionStorage.removeItem('suhwagdamToken');
+            setUserData({accountId: '', nickname: ''});
+        })
+    }
+
     return (
         <SideContainer isOpen={ isOpen }>
-            <NonMemberContainer>
-                <NonMember>비비 님</NonMember>
-                <JoinDiv><Link to = '/join' style={{ textDecoration: 'none', color: 'gray' }}>회원가입</Link></JoinDiv>
+            <NonMemberContainer accountId={accountId}>
+                {accountId ? ( 
+                    <Link to='/mypage' style={{ textDecoration: 'none' }}><NonMember>{userData.nickname}님</NonMember></Link> 
+                ) : ( 
+                    <NonMember>로그인을 해주세요.</NonMember>
+                )}
+
+                {!accountId && (
+                    <JoinDiv>
+                        <Link to='/join' style={{ textDecoration: 'none', color: 'gray' }}>
+                            회원가입
+                        </Link>
+                    </JoinDiv>
+                )}
             </NonMemberContainer>
-                <LoginOutBtn>
-                    <Link to = '/login' style={{ textDecoration: 'none', color: 'white' }}>로그인</Link>
-                </LoginOutBtn> 
-            <MypageContainer>
-                <MypageMenu><p>정보 수정</p></MypageMenu>
-                <MypageMenu><p>배송지 관리</p></MypageMenu>
-                <MypageMenu><p>상품 관리</p></MypageMenu>
-                <MypageMenu><p>경매 내역</p></MypageMenu>
-                <MypageMenu><p>낙찰 내역</p></MypageMenu>
-            </MypageContainer>
+
+                {accountId && (
+                        <Link to='/' style={{ textDecoration: 'none', color: 'white' }}>
+                            <LoginOutBtn onClick={logout} accountId={accountId}>
+                                로그아웃
+                            </LoginOutBtn>
+                        </Link>
+                    )
+                }
+                {!accountId && (
+                        <Link to='/login' style={{ textDecoration: 'none', color: 'white' }}>
+                            <LoginOutBtn accountId={accountId}>
+                                로그인
+                            </LoginOutBtn>
+                        </Link>
+                    )
+                }
+                {accountId && (
+                    <MypageContainer>
+                        <Link to='/info' style={{textDecoration: 'none'}}><MypageMenu><p>정보 수정</p></MypageMenu></Link>
+                        <Link to='/address' style={{textDecoration: 'none'}}><MypageMenu><p>배송지 관리</p></MypageMenu></Link>
+                        <Link to='/goods' style={{textDecoration: 'none'}}><MypageMenu><p>상품 관리</p></MypageMenu></Link>
+                        <Link to='/auction' style={{textDecoration: 'none'}}><MypageMenu><p>경매 내역</p></MypageMenu></Link>
+                        <Link to='/bid' style={{textDecoration: 'none'}}><MypageMenu><p>낙찰 내역</p></MypageMenu></Link>
+                    </MypageContainer>
+                )}
+                
         </SideContainer>
 
     );

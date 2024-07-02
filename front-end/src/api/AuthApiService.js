@@ -17,6 +17,12 @@ export const checkId = (accountId) => {
 export const checkEmail = (email) => {
     return apiClient.get(`api/v1/auth/email-check/${email}`);
   };
+export const getUserData = (accountId) => {
+    return apiClient.get(`api/v1/user-account/${accountId}`, userUpdate);
+  };
+export const userUpdate = (accountId, userUpdate) => {
+    return apiClient.put(`api/v1/user-account/${accountId}`, userUpdate);
+  };
 export const verify = (email, certificationToken) => {
     return apiClient.get(`api/v1/auth/verify?email=${email}&certificationToken=${certificationToken}`);
   };

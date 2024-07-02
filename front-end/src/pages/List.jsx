@@ -10,6 +10,7 @@ import { useRecoilValue } from 'recoil';
 import { goodsState } from '../atoms/goodsState';
 import { Link, useParams } from 'react-router-dom';
 import ItemEmpty from "../components/ItemEmpty";
+import { userState } from '../atoms/userState';
 
 const Container = styled.div` 
     margin: 50px auto;
@@ -253,20 +254,25 @@ const FilterContainer = styled.div`
 const FilterBox = styled.div`   
     background-color: white;
     display: flex;  
-    width: 250px;
+    width: 300px;
     height: 35px;
     justify-content: center;
     align-items: center;
     border-radius: 15px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     position: fixed;
-    left: 30px;
-    top: 265px;
+    left: 220px;
+    top: 400px;
     z-index: 999;
+
+    @media (max-width: 2249px) {
+        top: 265px;
+        left: 40px;
+    }
 
     @media (max-width: 1300px) {
         top: 245px;
-        left: 10px;
+
     }
     @media (max-width: 639px) {
         position: relative;
@@ -310,9 +316,9 @@ const FilterTitle = styled.p`
 const FilterButton = styled.button`
     display: none;
     @media(max-width: 639px) {
-        border: 1px solid #B7B7B7;
-        color: ${props => props.checked ? 'white' : '#B7B7B7'};
-        background-color: ${props => props.checked ? '#B7B7B7' : 'white'};
+        border: 1px solid #5AC463;
+        color: ${props => props.checked ? 'white' : '#5AC463'};
+        background-color: ${props => props.checked ? '#5AC463' : 'white'};
         display: flex;
         border-radius: 8px;
         flex-direction: row;
@@ -390,6 +396,9 @@ const List = () => {
     const [checkedOneHour, setCheckedOneHour] = useState(true); // 체크박스(마감임박) 상태
     const [showOneHour, setShowOneHour] = useState(false); // 마감임박 버튼 상태
 
+    const userData = useRecoilValue(userState); // Recoil 상태 관리 훅을 통해 유저 데이터 상태를 가져옴
+    const hasId = userData && userData.id;
+
 
     useEffect(() => {
         // 데이터가 변경될 때마다 itemsShow 상태에 따라 dataList를 업데이트
@@ -447,15 +456,7 @@ const List = () => {
             }
             return true;
         });
-
-        // state에 따른 데이터 필터
-        // if (state === 'ing') {
-        //     filteredData = filteredData.filter(item => new Date(item.deadline) > new Date());
-        // } else if (state === 'onehour') {
-        //     filteredData = filteredData.filter(item => new Date(item.deadline) - new Date() < 3600000);
-        // } else {
-        //     filteredData = filteredData.filter(item => new Date(item.deadline) > new Date());
-        // }
+        
         if (showOneHour) {
             filteredData = filteredData.filter(item => new Date(item.deadline) - new Date() < 3600000);
 
@@ -511,7 +512,7 @@ const List = () => {
     const CheckOneHour = () => {
         setShowOneHour(!showOneHour); // 마감임박 버튼 상태 토글
     }
-
+    
     return (
         <Container>
             <SearchContainer>
@@ -543,9 +544,9 @@ const List = () => {
                 </DropList>
                 <div style={{display: 'flex', flexDirection:'row'}}>
                     <Link to='/goods-register' style={{textDecoration: 'none'}}>
-                        <WriteBtn>상품 등록</WriteBtn>
-                    </Link>
-                            
+                        <WriteBtn hasId={hasId}>상품 등록</WriteBtn> 
+                    </Link> 
+                    
                     <FilterContainer filterVis={filterVis}>     
                         <FilterBack filterVis={filterVis} onClick={() => setFilterVis(!filterVis)}/>   
                         <FilterBox filterVis={filterVis}>
@@ -560,6 +561,9 @@ const List = () => {
 
                     <FilterBox>
                         <CheckDiv>
+                            <Checkbox onClick={() => setShowOneHour(!showOneHour)} checked={showOneHour}>
+                                <FilterText>마감 임박</FilterText>
+                            </Checkbox>
                             <Checkbox onClick={() => setCheckedFarm(!checkedFarm)} checked={checkedFarm}>
                                 <FilterText>농산물</FilterText>
                             </Checkbox>
