@@ -11,7 +11,6 @@ import sweet from "sweetalert2";
 
 const HeaderContainer = styled.div` // 헤더 전체 컨테이너 스타일
     border-bottom: 1px solid lightgray;
-    width: 100%;
     height: 150px;
     display: flex;
     flex-direction: row;
@@ -107,7 +106,6 @@ const Header = () => {
         setIsOpen(!isOpen);
     };
 
-
     // 함수형 컴포넌트에서 useEffect를 사용하여 컴포넌트 마운트 상태에 따라 특정 작업을 처리 2
     useEffect(() => {
         setIsOpen(false);
@@ -126,7 +124,6 @@ const Header = () => {
             sessionStorage.removeItem('suhwagdamToken');
             setUserData({accountId: '', nickname: ''});
         })
-
     }
 
     return (
@@ -140,7 +137,9 @@ const Header = () => {
                 <Login visible={ visible }>
                     {
                         userData.accountId ?
+                        <Link to='/mypage' style={{ textDecoration: 'none' }}>
                             <p>{userData.nickname}님</p>
+                        </Link>    
                             :
                             <Link to='/join' style={{ textDecoration: 'none' }}><p>회원가입</p></Link>
                     }
