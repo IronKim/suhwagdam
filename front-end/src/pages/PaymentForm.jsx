@@ -33,24 +33,6 @@ const AmountButton = styled.button`
   font-size: 20px;
 `;
 
-const PaymentMethodContainer = styled.div`
-  margin-top: 50px;
-  margin-bottom: 100px;
-`;
-
-const PaymentButton = styled.button`
-  background-color: ${props => props.selected ? '#ddd' : '#fff'};
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 40px 40px;
-  font-size: 20px;
-  margin: 5px;
-  cursor: pointer;
-  &:hover {
-    background-color: #eee;
-  }
-`;
-
 const AgreementContainer = styled.div`
   display: flex;
   align-items: center;
@@ -104,7 +86,6 @@ const ErrorMessage = styled.div`
 
 const PaymentForm = () => {
   const [selectedAmount, setSelectedAmount] = useState(null);
-  const [selectedMethod, setSelectedMethod] = useState(null);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -120,12 +101,30 @@ const PaymentForm = () => {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      alert('폼이 성공적으로 제출되었습니다.'); 
-      // 결제 처리 코드 추가 
-    }
-  };
+      e.preventDefault();
+      if (validateForm()) {
+          // 결제 처리 코드 추가
+          IMP.request_pay({
+              pg: 'html5_inicis',
+              pay_method: 'card',
+              merchant_uid: 'merchant_' + new Date().getTime(),
+              name: selectedAmount + ' 상품 결제',
+              amount: Number(selectedAmount.replace('만원', '0000')),
+          }, function (rsp) {
+              if (rsp.success) {
+                  var msg = '결제가 완료되었습니다.';
+                  msg += '고유ID : ' + rsp.imp_uid;
+                  msg += '상점 거래ID : ' + rsp.merchant_uid;
+                  msg += '결제 금액 : ' + rsp.paid_amount;
+                  msg += '카드 승인번호 : ' + rsp.apply_num;
+              } else {
+                  var msg = '결제에 실패하였습니다.';
+                  msg += '에러내용 : ' + rsp.error_msg;
+              }
+              alert(msg);
+          });
+      }
+    };
 
   return (
     <FormContainer>
@@ -141,19 +140,6 @@ const PaymentForm = () => {
           </AmountButton>
         ))}
       </AmountContainer>
-
-      <h2>결제수단</h2>
-      <PaymentMethodContainer>
-        {['신용카드', '카카오페이'].map(method => (
-          <PaymentButton
-            key={method}
-            selected={selectedMethod === method}
-            onClick={() => setSelectedMethod(method)}
-          >
-            {method}
-          </PaymentButton>
-        ))}
-      </PaymentMethodContainer>
 
       <form onSubmit={handleSubmit}>
         <AgreementContainer>
