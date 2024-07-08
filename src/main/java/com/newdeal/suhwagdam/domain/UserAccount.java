@@ -9,6 +9,7 @@ import lombok.*;
 @Entity
 @ToString
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -33,6 +34,9 @@ public class UserAccount {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RoleType roleType;
+    
+    @Column(nullable = false)
+    private int point;
 
     public void update(String password, String email, String nickname) {
         this.password = password;
@@ -48,6 +52,7 @@ public class UserAccount {
                 .email(userAccountDto.getEmail())
                 .nickname(userAccountDto.getNickname())
                 .roleType(userAccountDto.getRoleType())
+                .point(userAccountDto.getPoint())
                 .build();
     }
 }

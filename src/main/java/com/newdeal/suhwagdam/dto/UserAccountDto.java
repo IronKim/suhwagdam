@@ -22,6 +22,7 @@ public class UserAccountDto implements UserDetails {
     private String email;
     private String nickname;
     private RoleType roleType;
+    private int point;
 
     public static UserAccountDto fromEntity(UserAccount userAccount) {
         return new UserAccountDto(
@@ -30,7 +31,8 @@ public class UserAccountDto implements UserDetails {
                 userAccount.getPassword(),
                 userAccount.getEmail(),
                 userAccount.getNickname(),
-                userAccount.getRoleType()
+                userAccount.getRoleType(),
+                userAccount.getPoint()
         );
     }
 

@@ -11,13 +11,15 @@ public class UserAccountResponse {
     private String accountId;
     private String email;
     private String nickname;
+    private int point;
 
     public static UserAccountResponse fromUserAccountDto(UserAccountDto userAccountDto) {
         return new UserAccountResponse(
                 userAccountDto.getSeq(),
                 userAccountDto.getAccountId(),
                 userAccountDto.getEmail(),
-                userAccountDto.getNickname()
+                userAccountDto.getNickname(),
+                userAccountDto.getPoint()
         );
     }
 }

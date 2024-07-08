@@ -30,6 +30,9 @@ public class PaymentService {
                 .amount(amount)
                 .build()
         );
+        int userPoint = userAccount.getPoint();
+        userAccount.setPoint(userPoint + amount);
+        userAccountRepository.save(userAccount);
     }
 
     public List<Payment> getPayments() {
