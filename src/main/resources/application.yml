@@ -6,7 +6,8 @@ spring:
         - common
       prod:
         - common
-
+#server:
+#  port: 8080
 ---
 
 spring:
@@ -16,36 +17,57 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${MAIL_ID}
-    password: ${MAIL_PW}
+    username: 5646
+    password: 56165
   jpa:
     open-in-view: false
+
+    username: 
+    password: 
+    properties:
+      mail:
+        debug: true
+        smtp.auth: true
+        smtp.timeout: 50000
+        smtp.starttls.enable: true
+        smtp.ssl.trust: smtp.gmail.com
+
 jwt:
-  secret-key: ${JWT_SECRET_KEY}
+  secret-key: suhwagdamsuhwagdamsuhwagdamsuhwagdamsuhwagdamsuhwagdam-secret
   expired-time-ms: 864000000
 
----
+
 logging:
   level:
     com.newdeal.suhwagdam: DEBUG
     org.springframework.web.servlet: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-
+---
 spring:
   config:
     activate:
       on-profile: local
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${LOCAL_DB_URL}
-    username: ${LOCAL_DB_USERNAME}
-    password: ${LOCAL_DB_PASSWORD}
+#    url: jdbc:mysql://sunkyoung.store:3306/suhwagdam
+    url: jdbc:mysql://localhost:3306/suhwagdam
+    username: root
+    password: 1234
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Asia/Seoul
+#  jpa:
+#    properties:
+#      hibernate:
+#        dialect: org.hibernate.dialect.MySQLDialect
   data:
     redis:
-      url: ${LOCAL_REDIS_URL}
       repositories:
         enabled: false
+      url: redis://localhost:6379
+#      url: redis://sunkyoung.store:6379
