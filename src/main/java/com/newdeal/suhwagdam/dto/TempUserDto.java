@@ -13,5 +13,4 @@ public class TempUserDto {
     private String email;
     private String nickname;
     private String certificationToken;
-    private int point;
 }

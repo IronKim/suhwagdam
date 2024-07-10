@@ -31,8 +31,17 @@ public class BidService {
 
         // TODO: 판매자나 마지막 입찰자가 입찰을 할 수 없도록 처리
 
-        // TODO: 포인트 사용 처리, 포인트가 부족하면 입찰 불가능 처리, 전입찰자에게 포인트 반환 처리
+        // TODO: 포인트 사용 처리,전입찰자에게 포인트 반환 처리
+        //포인트부족부터
+        int userPoints = userAccount.getPoint();
+        int bidAmount = request.getBidAmount();
 
+        if (userPoints < bidAmount) {
+            throw new SuhwagdamApplicationException(ErrorCode.INSUFFICIENT_POINTS);
+        }
+        userAccount.setPoint(userPoints - bidAmount);
+        userAccountRepository.save(userAccount);
+        
         // TODO: 알림 처리
 
         goods.updateCurrentBidPrice(request.getBidAmount());

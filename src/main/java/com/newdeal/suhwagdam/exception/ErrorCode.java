@@ -24,6 +24,8 @@ public enum ErrorCode {
     MAX_UPLOAD_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "Max upload size exceeded"),
     NOT_IMAGE_EXTENSION(HttpStatus.BAD_REQUEST, "Not image extension"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"),
+    BIDDER_NOT_ALLOWED(HttpStatus.FORBIDDEN, "Bidder is not allowed"),
+    INSUFFICIENT_POINTS(HttpStatus.BAD_REQUEST, "Insufficient points"),
     ;
 
     private final HttpStatus status;

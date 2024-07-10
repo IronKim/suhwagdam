@@ -69,7 +69,6 @@ public class AuthService {
                 .email(userJoinRequest.getEmail())
                 .nickname(userJoinRequest.getNickname())
                 .certificationToken(certificationToken)
-                .point(0)
                 .build();
 
         tempUserAccountCacheRepository.setJoinUserCache(tempUserDto);
@@ -89,6 +88,7 @@ public class AuthService {
                 .email(tempUserDto.getEmail())
                 .nickname(tempUserDto.getNickname())
                 .roleType(RoleType.USER)
+                .point(0)
                 .build());
 
         tempUserAccountCacheRepository.deleteJoinUserCache(tempUserDto);
