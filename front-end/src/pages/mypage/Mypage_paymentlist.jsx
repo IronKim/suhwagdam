@@ -3,8 +3,10 @@ import styled from "styled-components";
 import { userState } from '../../atoms/userState';
 import { useRecoilValue } from 'recoil';
 import { useInView } from 'react-intersection-observer';
-import { getAuctionList } from '../../api/GoodsApiService';
+import { getPaymentList } from '../../api/PaymentApiService';
 import ItemEmpty from '../../components/ItemEmpty';
+import coinImg from '../../asset/images/coin.png';
+import { getUserData } from '../../api/AuthApiService';
 
 const Inner = styled.div`
     width: 70%;
@@ -15,7 +17,7 @@ const Inner = styled.div`
         width: 90%;
         }
 `
-const GoodsCard = styled.div`
+const PaymentCard = styled.div`
     /* border: 1px solid blue; */
     width: 100%;
     height: 120px;
@@ -41,19 +43,20 @@ const CardInner = styled.div`
     border-radius: 15px;
     display: flex;
 `
-const GoodsPhoto = styled.div`
+const PaymentPhoto = styled.div`
     /* border: 1px solid blue; */
     border-radius: 15px;
     min-width: 110px;
     height: 100%;
     overflow: hidden;
+    margin-left: 2%;
     img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
 `
-const GoodsContext = styled.div`
+const PaymentContext = styled.div`
     /* border: 1px solid orange; */
     height: 100%;
     width: 55%;
@@ -61,15 +64,36 @@ const GoodsContext = styled.div`
     padding-top: 2%;
     @media (max-width: 639px){
         width: 40%;
-        }
+    }
 `
-const GoodsContextState = styled.p`
+const PaymentContextState = styled.p`
     /* border: 1px solid orange; */
     margin:0;
     color: #FF9900;
     font-weight: bold;
 `
-const GoodsContextTitle = styled.p`
+const PaymentContextDate = styled.p`
+    /* border: 1px solid orange; */
+    margin:0;
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    color: #9E9E9E;
+`
+// const PaymentContextMethod = styled.p`
+//     /* border: 1px solid orange; */
+//     margin:0;
+//     font-weight: bold;
+//     font-size: 20px;
+//     white-space: nowrap;
+//     overflow: hidden;
+//     text-overflow: ellipsis;
+//     padding-top: 2%;
+// `
+const PaymentContextPrice = styled.p`
     /* border: 1px solid orange; */
     margin:0;
     font-weight: bold;
@@ -78,15 +102,10 @@ const GoodsContextTitle = styled.p`
     overflow: hidden;
     text-overflow: ellipsis;
     padding-top: 2%;
-`
-const GoodsContextPrice = styled.p`
-    /* border: 1px solid orange; */
-    margin:0;
-    padding-top: 1%;
 ` 
-    const Mypage_auction = () => {
+    const Mypage_paymentlist = () => {
     const user = useRecoilValue(userState); //아톰
-    const [auctionList, setAuctionList] = useState([]);
+    const [paymentList, setPaymentList] = useState([]);
     const accountId = user.accountId;
 
     const { ref, inView } = useInView({ threshold: 0.5 }); // Infinite Scroll을 위한 useRef와 useInView hook
@@ -95,11 +114,11 @@ const GoodsContextPrice = styled.p`
 
     useEffect(() => {
         if (accountId) {
-            getAuctionList(accountId)
+            getPaymentList()
                 .then(res => {
                     console.log('API 연결:', res.data);
-                    setAuctionList(res.data.result || res.data)
-                    
+                    setPaymentList(res.data.result || res.data)  
+        
                 })
                 .catch(err => {
                     console.error('API 연결 실패:', err); 
@@ -119,24 +138,27 @@ const GoodsContextPrice = styled.p`
     return (
         <div style={{height:'100%', display: 'flex', justifyContent:'center'}}>
             <Inner>
-            {auctionList.slice(0, listShow).map((item, index) => (
-                    <GoodsCard key={index}>
+            <div style={{width: '500px', fontSize: '28px'}}><p>현재 포인트 {user.point?.toLocaleString()}원 :)</p></div>
+            {paymentList.length > 0 && paymentList.slice(0, listShow).map((item, index) => (
+                
+                    <PaymentCard key={index}>
                         <CardInner>
-                        <GoodsPhoto><img src={item?.goodsResponse.images} alt='auction img'></img></GoodsPhoto>
-                        <GoodsContext>
-                            <GoodsContextState>{item?.goodsResponse.title}</GoodsContextState>
-                            <GoodsContextTitle>{item?.goodsResponse.description}</GoodsContextTitle>
-                            <GoodsContextPrice>내가 입찰한 금액 : {item?.bidAmount}원</GoodsContextPrice>
-                        </GoodsContext>
+                        <PaymentPhoto><img src={coinImg} alt='coin img'></img></PaymentPhoto>
+                        <PaymentContext>
+                            <PaymentContextState>충전 완료</PaymentContextState>
+                            <PaymentContextDate>{new Date(item.createdAt).toLocaleString()}</PaymentContextDate>
+                            {/* <PaymentContextMethod>{item.selectedMethod}</PaymentContextMethod> */}
+                            <PaymentContextPrice>{item.amount.toLocaleString()}원</PaymentContextPrice>
+                        </PaymentContext>
                         </CardInner>
-                    </GoodsCard>
+                    </PaymentCard>
                 )
            )}
             <div ref={ref} /> {/* inView Scroll 생성 위치 */}
             </Inner>
-            {auctionList.length === 0 && <ItemEmpty/>}
+            {paymentList.length === 0 && <ItemEmpty/>}
         </div>
     );
 };
 
-export default Mypage_auction;
+export default Mypage_paymentlist;
