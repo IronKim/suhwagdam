@@ -4,12 +4,14 @@ import com.newdeal.suhwagdam.domain.UserAccount;
 import com.newdeal.suhwagdam.domain.constant.RoleType;
 import com.newdeal.suhwagdam.dto.BidDto;
 import com.newdeal.suhwagdam.dto.GoodsDto;
+import com.newdeal.suhwagdam.dto.SuccessBidDTO;
 import com.newdeal.suhwagdam.dto.UserAccountDto;
 import com.newdeal.suhwagdam.dto.request.UserAccountUpdateRequest;
 import com.newdeal.suhwagdam.exception.ErrorCode;
 import com.newdeal.suhwagdam.exception.SuhwagdamApplicationException;
 import com.newdeal.suhwagdam.repository.BidRepository;
 import com.newdeal.suhwagdam.repository.GoodsRepository;
+import com.newdeal.suhwagdam.repository.SuccessBidRepository;
 import com.newdeal.suhwagdam.repository.UserAccountRepository;
 import com.newdeal.suhwagdam.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,7 @@ public class UserAccountService {
     private final UserAccountRepository userAccountRepository;
     private final GoodsRepository goodsRepository;
     private final BidRepository bidRepository;
+    private final SuccessBidRepository successBidRepository;
 
     private final BCryptPasswordEncoder encoder;
 
@@ -60,6 +63,12 @@ public class UserAccountService {
         UserAccount participant = getUserEntityException(userAccountId);
         return bidRepository.findByParticipant(participant).stream()
                 .map(BidDto::fromEntity)
+                .collect(Collectors.toList());
+    }
+    public List<SuccessBidDTO> getSuccessBidsByUserAccountId(String userAccountId) {
+        UserAccount participant = getUserEntityException(userAccountId);
+        return successBidRepository.findByParticipant(participant).stream()
+        		.map(SuccessBidDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 

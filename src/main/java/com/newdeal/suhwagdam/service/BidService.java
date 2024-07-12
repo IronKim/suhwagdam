@@ -29,10 +29,16 @@ public class BidService {
         UserAccount userAccount = getUserEntityException(accountId);
         Goods goods = getGoodsEntityException(request.getGoodsSeq());
 
-        // TODO: 판매자나 마지막 입찰자가 입찰을 할 수 없도록 처리
-
-        // TODO: 포인트 사용 처리,전입찰자에게 포인트 반환 처리
-        //포인트부족부터
+        // 판매자가 입찰을 할 수 없도록 처리
+        if(goods.getSeller().equals(accountId)) {
+        	throw new SuhwagdamApplicationException(ErrorCode.SELLER_NOT_ALLOWED);
+        }
+        // 마지막 입찰자가 입찰을 할 수 없도록 처리
+        Bid lastBid = bidRepository.findTopByGoodsOrderByBidTimeDesc(goods);
+        if(lastBid != null && lastBid.getParticipant().getAccountId().equals(accountId)) {
+        	throw new SuhwagdamApplicationException(ErrorCode.BIDDER_NOT_ALLOWED);
+        }
+        //포인트부족, 포인트 사용 처리
         int userPoints = userAccount.getPoint();
         int bidAmount = request.getBidAmount();
 
