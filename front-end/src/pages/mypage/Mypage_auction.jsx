@@ -133,8 +133,8 @@ const GoodsContextPrice = styled.p`
                 )
            )}
             <div ref={ref} /> {/* inView Scroll 생성 위치 */}
-            </Inner>
             {auctionList.length === 0 && <ItemEmpty/>}
+            </Inner>
         </div>
     );
 };

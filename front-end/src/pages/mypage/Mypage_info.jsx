@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Butt from '../../components/Butt'
 import {userState} from "../../atoms/userState";
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { userUpdate } from '../../api/AuthApiService';
+import { getUserData, userUpdate } from '../../api/AuthApiService';
 import sweet from 'sweetalert2'; 
 import 'sweetalert2/dist/sweetalert2.min.css';
 
@@ -75,6 +75,24 @@ const InfoId = styled.div`
         justify-content: flex-end;
         margin-top: 5%;
     `
+    const InfoEmail = styled.div`
+        width: 70%;
+        height: 35px;
+        font-size: 25px;
+        padding: 5px 10px 5px 10px;
+        margin-bottom: 3%;
+        &::placeholder{
+            font-size: 15px;
+            color: #9E9E9E;
+        }
+        &:focus{
+            border: 1px solid #5AC463 !important;
+            outline: none;
+        }
+        @media (max-width: 639px){
+            width: 93%;
+        }
+    `
 const Mypage_info = () => {
     const userData = useRecoilValue(userState);
     const setUserData = useSetRecoilState(userState);
@@ -85,12 +103,20 @@ const Mypage_info = () => {
     });
 
     useEffect(() => {
-        setUpdate({
-            email: userData.email,
-            password: '',
-            nickname: userData.nickname
+        getUserData(userData.accountId)
+        .then(res => {
+            console.log('유저정보:', res.data.result)
+            setUserData(res.data.result)
+            setUpdate({
+                email: res.data.result.email,
+                password: '',
+                nickname: res.data.result.nickname
+            });
+        })
+        .catch(err => {
+            console.error('유저정보 불러오기 실패:', err)
         });
-    }, [userData]);
+    }, [userData.accountId, setUserData]);
 
     const updateInfo = (e) => {
         const {name, value} = e.target;
@@ -118,9 +144,9 @@ const Mypage_info = () => {
         }
 
         const updateData = {
-            email: update.email,
             password: update.password,
-            nickname: update.nickname
+            nickname: update.nickname,
+            point: userData.point
         }
 
         userUpdate(userData.accountId, updateData) //api 호출
@@ -130,8 +156,8 @@ const Mypage_info = () => {
                 // Recoil 상태 업데이트
                 const updatedUserData = {
                     ...userData,
-                    email: update.email,
-                    nickname: update.nickname
+                    nickname: update.nickname,
+                    point: res.data.result.point
                 };
                 setUserData(updatedUserData)
 
@@ -153,20 +179,15 @@ const Mypage_info = () => {
             </InfoCate>
             <InfoCate>
                 <CateTitle>이메일</CateTitle>
-                <StyledInput type="text"
-                             name="email"
-                             value={update.email}
-                             onChange={updateInfo}
-                             placeholder={userData.email}>
-                </StyledInput>
+                <InfoEmail>{userData.email}</InfoEmail>
             </InfoCate>
             <InfoCate>
                 <CateTitle>비밀번호</CateTitle>
                 <StyledInput type="password"
                              name="password"
                              value={update.password}
-                             onChange={updateInfo}>
-                </StyledInput>
+                             onChange={updateInfo} 
+                />
             </InfoCate>
             <InfoCate>
                 <CateTitle>닉네임</CateTitle>
@@ -174,8 +195,7 @@ const Mypage_info = () => {
                              name="nickname"
                              value={update.nickname}
                              onChange={updateInfo}
-                             placeholder={userData.nickname}>
-                </StyledInput>
+                />
             </InfoCate>
 
             <ButtDiv>

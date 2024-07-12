@@ -1,9 +1,10 @@
-import React, {useState, useEffect}from 'react';
+import React, {useState, useEffect, useRef}from 'react';
 import styled from "styled-components";
 import Butt from '../../components/Butt'
 import { useRecoilValue} from 'recoil';
 import { userState } from '../../atoms/userState';
 import { getMyGoodsList } from '../../api/GoodsApiService';
+import { useInView } from 'react-intersection-observer';
 
 const Inner = styled.div`
     width: 70%;
@@ -11,20 +12,26 @@ const Inner = styled.div`
         width: 90%;
         }
     @media (max-width: 639px){
-        width: 99%;
+        width: 90%;
         }
 `
 const GoodsCard = styled.div`
     /* border: 1px solid blue; */
     width: 100%;
-    height: 15%;
+    /* height: 15%; */
+    height: 120px;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     margin-bottom: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    
+    @media (max-width: 1000px){
+        width: 90%;
+        }
+    @media (max-width: 639px){
+        width: 99%;
+        }
 `
 const CardInner = styled.div`
     /* border: 1px solid red; */
@@ -50,9 +57,10 @@ const GoodsContext = styled.div`
     height: 100%;
     width: 55%;
     margin-left: 5%;
+    padding-top: 2%;
     @media (max-width: 639px){
         width: 40%;
-        }
+    }
 `
 const GoodsContextState = styled.p`
     /* border: 1px solid orange; */
@@ -68,11 +76,11 @@ const GoodsContextTitle = styled.p`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    
 `
 const GoodsContextPrice = styled.p`
     /* border: 1px solid orange; */
     margin:0;
+    padding-top: 1%;
 `
 const ButtDiv = styled.div`
     /* border: 1px solid red; */
@@ -87,6 +95,10 @@ const Mypage_Goods = () => {
     console.log(user);
     const [goodsList,setGoodsList] = useState([]);
 
+    const { ref, inView } = useInView({ threshold: 0.5 }); // Infinite Scroll을 위한 useRef와 useInView hook
+    const prevInView = useRef(false); // useRef를 사용하여 이전 inView 값을 기억
+    const [listShow, setListShow] = useState(8); // 한 번에 보여줄 아이템 수
+
       useEffect(() => {
         getMyGoodsList(user.accountId)
         .then(res => {
@@ -98,10 +110,21 @@ const Mypage_Goods = () => {
           })
       }, []);
       
+      useEffect(() => {
+        //nView 값 변경시 itemsShow 업데이트
+        if (inView && !prevInView.current) {
+            setListShow(prevItems => prevItems + 8);
+        }
+        prevInView.current = inView;
+
+    }, [inView]);
+
+
+
     return (
         <div style={{height:'100%', display: 'flex', justifyContent:'center'}}>
             <Inner>
-            {goodsList?.map((item, index) =>(
+            {goodsList?.slice(0, listShow).map((item, index) =>(
                     <GoodsCard>
                     <CardInner>
                     <GoodsPhoto><img src='{item && item.images}'></img></GoodsPhoto>
@@ -115,6 +138,7 @@ const Mypage_Goods = () => {
                     </GoodsCard>
             )
             )}
+            <div ref={ref} /> {/* inView Scroll 생성 위치 */}
             </Inner>
         </div>
     );
