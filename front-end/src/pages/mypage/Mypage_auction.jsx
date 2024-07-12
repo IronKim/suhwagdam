@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Butt from '../../components/Butt'
 import { userState } from '../../atoms/userState';
 import { getAuctionList } from '../../api/GoodsApiService';
+import { getMyBidsList } from '../../api/BidApiService';
 import { useRecoilValue } from 'recoil';
 import { useInView } from 'react-intersection-observer';
 
@@ -99,11 +100,24 @@ const Mypage_auction = () => {
 
     useEffect(() => {
         if (accountId) {
+            
             getAuctionList(accountId)
                 .then((res) => {
                     console.log('API response:', res.data);
                     setAuctionList(res.data.result || res.data)
                     
+                })
+                .catch((err) => {
+                    console.error('API error:', err); 
+                });
+        }
+    }, [accountId]);
+    useEffect(() => {
+        if (accountId) {
+            
+            getMyBidsList(accountId)
+                .then((res) => {
+                    console.log('낙찰낙찰:', res.data);
                 })
                 .catch((err) => {
                     console.error('API error:', err); 

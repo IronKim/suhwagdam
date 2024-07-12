@@ -39,6 +39,7 @@ jwt:
 
 logging:
   level:
+    com.newdeal.suhwagdam.service.SuccessBidService: DEBUG
     com.newdeal.suhwagdam: DEBUG
     org.springframework.web.servlet: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE

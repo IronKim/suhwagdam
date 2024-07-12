@@ -98,4 +98,8 @@ public class Goods {
         }
         this.currentBidPrice = newBidPrice;
     }
+
+	public void setStatus(GoodsStatus complete) {
+		this.status = complete;		
+	}
 }

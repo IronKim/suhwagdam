@@ -7,6 +7,7 @@ import { Modal } from 'antd';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useRecoilValue} from 'recoil';
 import { goodsState } from '../atoms/goodsState';
+import { userState } from '../atoms/userState';
 import { postbid } from '../../src/api/BidApiService';
 import { getBidsBygoodsSeq } from '../../src/api/BidApiService';
 import sweet from 'sweetalert2'; 
@@ -14,6 +15,7 @@ import { subscribeToBidUpdates } from '../webSocket/Subscribe';
 import {useParams} from "react-router-dom";
 import { calculateTimeDifference } from '../hook/time';
 import { numberFormat } from '../utils/formating';
+import { getUserData } from '../../src/api/AuthApiService';
 
 const BaseDiv = styled.div`
 /* border: 1px solid red; */
@@ -269,15 +271,29 @@ const MBtnInner = styled.div`
 
 const Detail = () => {
 
-  const dataList = useRecoilValue(goodsState); //아톰이
+  const dataList = useRecoilValue(goodsState); //상품아톰이
+  const user = useRecoilValue(userState); //유저아톰이
   const params = useParams();
-
   const seq = params.goodsSeq;
-
   const detailGoods = dataList.find(goods => goods.seq === Number(seq));
-  
   const [time, setTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [isTimeUp, setIsTimeUp] = useState(false);
+  
+
+    //포인트 들어오나 확인중
+    const [userId, setUserId] = useState(user.accountId);
+    const [userPoint, setUsePoint] = useState(user.accountId);
+    useEffect(() => {
+        getUserData(userId)
+        .then(res => {
+          setUsePoint(res.data.result.point)
+          // console.log("겟유저포인트",res.data.result.point)
+                })
+        .catch(e => {
+            console.log(e);
+        })
+    }, [detailGoods]);
+    //포인트 들어오나 확인중
     
 //시간
   useEffect(() => {
@@ -301,22 +317,21 @@ const Detail = () => {
 //경매상품 입찰정보
   const [bids, setBids] = useState([]);
 
-    useEffect(() => {
-      getBidsBygoodsSeq(params.goodsSeq)
-          .then(response => {
-              setBids(response.data.result);
-          })
-          .catch(error => {
-              console.error('에러:', error);
-          })
-      const sub = subscribeToBidUpdates(params.goodsSeq, setBids);
-      return () => {
-        sub.then(s => s.unsubscribe())
-         .catch(e => {
-          console.error('에러',e);
-         })
-      }
-
+  useEffect(() => {
+    getBidsBygoodsSeq(params.goodsSeq)
+        .then(response => {
+            setBids(response.data.result);
+        })
+        .catch(e => {
+            // console.error('에러:', e);
+        })
+    const sub = subscribeToBidUpdates(params.goodsSeq, setBids);
+    return () => {
+      sub.then(s => s.unsubscribe())
+        .catch(e => {
+        // console.error('에러',e);
+        })
+    }
   }, [params.goodsSeq]);
 //경매모달
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -325,8 +340,33 @@ const Detail = () => {
     bidAmount:''
   });
   const [bidAmount, setBidAmount] = useState('');
-
+  const token = localStorage.getItem('suhwagdamToken') || sessionStorage.getItem('suhwagdamToken');
+// console.log('토큰:', token);
+// console.log(userId)
   const showModal = (seq) => {
+    if(!token){
+      sweet.fire({
+        text: "먼저 로그인 해주세요.",
+        icon: "error"
+      });
+      return
+    }
+    if(userPoint< detailGoods?.currentBidPrice){
+      sweet.fire({
+        text: "포인트를 충전해 주세요.",
+        icon: "error"
+      });
+      return
+    }
+    if (detailGoods?.userAccountResponse?.accountId === userId) {
+      sweet.fire({
+        text: "판매자는 입찰할 수 없습니다.",
+        icon: "error"
+      });
+      return;
+    }
+
+
     setBidDTO({ ...bidDTO, goodsSeq: seq });
     setIsModalOpen(true);
   };
@@ -343,6 +383,7 @@ const Detail = () => {
       setBidAmount(numberFormat(bidAmount));
     }
   }
+
   const bidOk = () => {
     setIsModalOpen(false);
     const price = bidAmount.replaceAll(',','');
@@ -351,18 +392,26 @@ const Detail = () => {
       bidAmount: price
     })
     .then(res => {
-      console.log(res)
+      // console.log(res)
       sweet.fire({
               text: "입찰성공",
               icon: "success"
             });
           })
     .catch(e => {
-      console.log(e)
+      // console.log(e)
+      if(e.response && e.response.data && e.response.data.resultCode === "BIDDER_NOT_ALLOWED"){
+        sweet.fire({
+          text: "현재 금액의 마지막 입찰자 입니다.",
+          icon: "warning",
+        });
+      }
+      if(e.response && e.response.data && e.response.data.resultCode === "INVALID_BID_AMOUNT"){
         sweet.fire({
           text: "현재 가격보다 높은 금액으로 입찰해주세요.",
           icon: "warning",
         });
+      }
       
     })
     setBidAmount('')

@@ -143,7 +143,7 @@ const Mypage_address = () => {
         script.async = true;
         document.body.appendChild(script);
     }, []);
-    console.log('새주소',newAddressDTO)
+    // console.log('새주소',newAddressDTO)
 //주소끝
 
     const onInput = (e) => {
@@ -170,10 +170,10 @@ const Mypage_address = () => {
             (<AddressInfo>
                 <p>현재 등록되어있는 주소</p>
                 <br></br>
-                <div><span>이름: </span><span style={{color:'black'}}>{addressDTO.name}</span></div>
-                <div><span>전화번호: </span><span style={{color:'black'}}>{addressDTO.number}</span></div>
-                <div><span>주소: </span><span style={{color:'black'}}>{addressDTO.address}</span></div>
-                <div><span>상세주소: </span><span style={{color:'black'}}>{addressDTO.detailedAddress}</span></div>
+                <div><span>이름: </span><span style={{color:'black'}}>{addressDTO?.name}</span></div>
+                <div><span>전화번호: </span><span style={{color:'black'}}>{addressDTO?.number}</span></div>
+                <div><span>주소: </span><span style={{color:'black'}}>{addressDTO?.address}</span></div>
+                <div><span>상세주소: </span><span style={{color:'black'}}>{addressDTO?.detailedAddress}</span></div>
 
                 <AddressInfoBut onClick={() => setUpdate(true)}>수정</AddressInfoBut>
             </AddressInfo>)

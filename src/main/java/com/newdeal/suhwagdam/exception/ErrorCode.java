@@ -25,6 +25,7 @@ public enum ErrorCode {
     NOT_IMAGE_EXTENSION(HttpStatus.BAD_REQUEST, "Not image extension"),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error"),
     BIDDER_NOT_ALLOWED(HttpStatus.FORBIDDEN, "Bidder is not allowed"),
+    SELLER_NOT_ALLOWED(HttpStatus.FORBIDDEN, "Seller is not allowed"),
     INSUFFICIENT_POINTS(HttpStatus.BAD_REQUEST, "Insufficient points"),
     ;
 

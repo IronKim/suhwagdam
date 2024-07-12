@@ -45,7 +45,10 @@ const View = () => {
         const sub = subscribeToGoodsUpdates(setGoodsList);
 
         return () => {
-            sub.then(s => s.unsubscribe());
+            sub.then(s => s.unsubscribe())
+            .catch(e => {
+                console.error('에러',e);
+               })
         }
     }, []);
 
