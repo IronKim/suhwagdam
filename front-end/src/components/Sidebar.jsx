@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { userState } from '../atoms/userState';
 import { useRecoilState } from 'recoil';
 import sweet from "sweetalert2";
+import { useState } from 'react';
+import point from '../asset/images/point.png';
 
 const SideContainer = styled.div` // 사이드바 전체 컨테이너 스타일
     display: none;
@@ -21,7 +23,18 @@ const SideContainer = styled.div` // 사이드바 전체 컨테이너 스타일
         transition: right 0.9s ease-in-out;
     }
 `;
-
+const MemberPoint = styled.div` // 포인트 스타일
+    /* border: 1px solid red; */
+    /* width: 100%; */
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    color: #404040;
+    background-color: white;
+    /* border: 1px solid black; */
+`
 const NonMemberContainer = styled.div` // 로그인 정보 없을 때 : 없을 때
     ${props => !props.accountId && `    
         width: 100%;
@@ -35,16 +48,17 @@ const NonMemberContainer = styled.div` // 로그인 정보 없을 때 : 없을 �
     `}
     ${props => props.accountId && `
         width: 100%;
-        height: 40px;
+        height: 100px;
         display: flex;
         margin-top: 53px;
-        flex-direction: row;
+        flex-direction: column;
         justify-content: space-around;
+        align-items: center;
         font-size: 15px;
         background-color: white;
+        // border: 1px solid black;
     `}
 `;
-
 const NonMember = styled.div`
     /* border: 1px solid blue; */
     width: 230px;
@@ -53,23 +67,23 @@ const NonMember = styled.div`
     justify-content: center;
     align-items: center;
     font-size: 25px;
-    margin-left: 30px;
     color: #404040;
     background-color: white;
+    /* border: 1px solid black; */
+    margin-top: 5px;
 `;
-
 const JoinDiv = styled.div`
+    /* border: 1px solid red; */
     width: 130px;
     height: 40px;
     display: flex;
-    margin-right: 30px;
+    margin-right: 10px;
     color: gray;
     text-decoration: underline;
     justify-content: center;
     align-items: center;
     font-size: 25px;
 `;
-
 const LoginOutBtn = styled.button` // 로그인 정보 없을 때 : 있을 때
     ${props => !props.accountId && `
         border: 1px solid #5AC463;
@@ -100,17 +114,15 @@ const LoginOutBtn = styled.button` // 로그인 정보 없을 때 : 있을 때
         background-color: #5AC463;
     `}
 `;
-
 const MypageContainer = styled.div`
     /* border: 1px solid blue; */
     width: 100%;
     position: absolute;
-    top: 170px;
+    top: 235px;
     /* height: 400px; */
     height: 650px;
     background-color: white;
 `;
-
 const MypageMenu = styled.div`
     border: 1px solid #D9D9D9;
     width: 100%;
@@ -122,11 +134,50 @@ const MypageMenu = styled.div`
     color: #404040;
     background-color: white;
 `;
-
 const Sidebar = ({ isOpen }) => {
     const [userData, setUserData] = useRecoilState(userState);
     const accountId = userData.accountId;
-
+    const [infoClick, setInfoClick] = useState(true);
+    const [addressClick, setAddressClick] = useState(false);
+    const [goodsClick, setGoodsClick] = useState(false);
+    const [auctionClick, setAuctionClick] = useState(false);
+    const [bidClick, setBidClick] = useState(false);
+    
+    const infoOn = () => {
+        setInfoClick(true)
+        setAddressClick(false)
+        setGoodsClick(false)
+        setAuctionClick(false)
+        setBidClick(false)
+    }
+    const addressOn = () => {
+        setAddressClick(true)
+        setInfoClick(false)
+        setGoodsClick(false)
+        setAuctionClick(false)
+        setBidClick(false)
+    }
+    const goodsOn = () => {
+        setGoodsClick(true)
+        setInfoClick(false)
+        setAddressClick(false)
+        setAuctionClick(false)
+        setBidClick(false)
+    }
+    const auctionOn = () => {
+        setAuctionClick(true)
+        setInfoClick(false)
+        setAddressClick(false)
+        setBidClick(false)
+        setGoodsClick(false)
+    }
+    const bidOn = () => {
+        setBidClick(true)
+        setInfoClick(false)
+        setAddressClick(false)
+        setAuctionClick(false)
+        setGoodsClick(false)
+    }
     const logout = () => {
         sweet.fire({
             icon: 'success',
@@ -138,15 +189,20 @@ const Sidebar = ({ isOpen }) => {
 
             localStorage.removeItem('suhwagdamToken');
             sessionStorage.removeItem('suhwagdamToken');
-            setUserData({accountId: '', nickname: ''});
+            setUserData({accountId: '', nickname: '', point: 0});
         })
     }
 
     return (
         <SideContainer isOpen={ isOpen }>
             <NonMemberContainer accountId={accountId}>
+             {userData.accountId && (
+                <Link to='/payment' style={{ textDecoration: 'none' }}>
+                    <MemberPoint><p><img src={point} style={{width: '30px', height: '30px'}} alt='포인트 아이콘' />{userData.point?.toLocaleString()}</p></MemberPoint>
+                </Link>
+            )}
                 {accountId ? ( 
-                    <Link to='/mypage' style={{ textDecoration: 'none' }}><NonMember>{userData.nickname}님</NonMember></Link> 
+                    <Link to='/mypage' style={{ textDecoration: 'none' }}><NonMember>{userData.nickname}님</NonMember></Link>
                 ) : ( 
                     <NonMember>로그인을 해주세요.</NonMember>
                 )}
@@ -170,24 +226,21 @@ const Sidebar = ({ isOpen }) => {
                 }
                 {!accountId && (
                         <Link to='/login' style={{ textDecoration: 'none', color: 'white' }}>
-                            <LoginOutBtn accountId={accountId}>
-                                로그인
-                            </LoginOutBtn>
+                            <LoginOutBtn accountId={accountId}>로그인</LoginOutBtn>
                         </Link>
                     )
                 }
                 {accountId && (
                     <MypageContainer>
-                        <Link to='/info' style={{textDecoration: 'none'}}><MypageMenu><p>정보 수정</p></MypageMenu></Link>
-                        <Link to='/address' style={{textDecoration: 'none'}}><MypageMenu><p>배송지 관리</p></MypageMenu></Link>
-                        <Link to='/goods' style={{textDecoration: 'none'}}><MypageMenu><p>상품 관리</p></MypageMenu></Link>
-                        <Link to='/auction' style={{textDecoration: 'none'}}><MypageMenu><p>경매 내역</p></MypageMenu></Link>
-                        <Link to='/bid' style={{textDecoration: 'none'}}><MypageMenu><p>낙찰 내역</p></MypageMenu></Link>
+                        <Link to='/mypage/info' style={{textDecoration: 'none'}}><MypageMenu><p>정보 수정</p></MypageMenu></Link>
+                        <Link to='/mypage/address' style={{textDecoration: 'none'}}><MypageMenu><p>배송지 관리</p></MypageMenu></Link>
+                        <Link to='/mypage/goods' style={{textDecoration: 'none'}}><MypageMenu><p>상품 관리</p></MypageMenu></Link>
+                        <Link to='/mypage/auction' style={{textDecoration: 'none'}}><MypageMenu><p>경매 내역</p></MypageMenu></Link>
+                        <Link to='/mypage/paymentlist' style={{textDecoration: 'none'}}><MypageMenu><p>포인트 내역</p></MypageMenu></Link>
+                        {/* <Link to='/mypage/bid' style={{textDecoration: 'none'}}><MypageMenu><p>낙찰 내역</p></MypageMenu></Link> */}
                     </MypageContainer>
                 )}
-                
         </SideContainer>
-
     );
 };
 

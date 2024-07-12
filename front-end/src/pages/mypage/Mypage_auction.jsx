@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
-import Butt from '../../components/Butt'
 import { userState } from '../../atoms/userState';
-import { getAuctionList } from '../../api/GoodsApiService';
 import { getMyBidsList } from '../../api/BidApiService';
+import { getAuctionList } from '../../api/GoodsApiService';
 import { useRecoilValue } from 'recoil';
 import { useInView } from 'react-intersection-observer';
+import { getAuctionList } from '../../api/GoodsApiService';
+import ItemEmpty from '../../components/ItemEmpty';
 
 const Inner = styled.div`
     width: 70%;
@@ -13,13 +14,14 @@ const Inner = styled.div`
         width: 90%;
         }
     @media (max-width: 639px){
-        width: 99%;
+        width: 90%;
         }
 `
 const GoodsCard = styled.div`
     /* border: 1px solid blue; */
-    width: 70%;
-    height: 15%;
+    width: 100%;
+    height: 120px;
+    /* height: 15%; */
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     margin-bottom: 3%;
@@ -58,6 +60,7 @@ const GoodsContext = styled.div`
     height: 100%;
     width: 55%;
     margin-left: 5%;
+    padding-top: 2%;
     @media (max-width: 639px){
         width: 40%;
         }
@@ -76,21 +79,15 @@ const GoodsContextTitle = styled.p`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    padding-top: 2%;
 `
 const GoodsContextPrice = styled.p`
     /* border: 1px solid orange; */
     margin:0;
-`
-const ButtDiv = styled.div`
-    /* border: 1px solid red; */
-    width: auto;
-    height: 100%;
-    display: flex;
-    align-items: end;
-    margin-left: auto;
+    padding-top: 1%;
 ` 
-const Mypage_auction = () => {
-    const user = useRecoilValue(userState);
+    const Mypage_auction = () => {
+    const user = useRecoilValue(userState); //아톰
     const [auctionList, setAuctionList] = useState([]);
     const accountId = user.accountId;
 
@@ -102,13 +99,13 @@ const Mypage_auction = () => {
         if (accountId) {
             
             getAuctionList(accountId)
-                .then((res) => {
-                    console.log('API response:', res.data);
+                .then(res => {
+                    console.log('API 연결:', res.data);
                     setAuctionList(res.data.result || res.data)
                     
                 })
-                .catch((err) => {
-                    console.error('API error:', err); 
+                .catch(err => {
+                    console.error('API 연결 실패:', err); 
                 });
         }
     }, [accountId]);
@@ -126,7 +123,7 @@ const Mypage_auction = () => {
     }, [accountId]);
 
     useEffect(() => {
-        // Infinite Scroll을 위해 inView 값이 변경될 때마다 itemsShow 상태 업데이트
+        //nView 값 변경시 itemsShow 업데이트
         if (inView && !prevInView.current) {
             setListShow(prevItems => prevItems + 8);
         }
@@ -134,30 +131,25 @@ const Mypage_auction = () => {
 
     }, [inView]);
 
-const showItems = auctionList.slice(0, listShow);
-
     return (
         <div style={{height:'100%', display: 'flex', justifyContent:'center'}}>
             <Inner>
-            {auctionList.length > 0 ? (
-               showItems.map((item, index) => (
+            {auctionList.slice(0, listShow).map((item, index) => (
                     <GoodsCard key={index}>
                         <CardInner>
-                        <GoodsPhoto><img src={item && item.images[0]} alt='auction img'></img></GoodsPhoto>
+                        <GoodsPhoto><img src={item?.goodsResponse.images} alt='auction img'></img></GoodsPhoto>
                         <GoodsContext>
-                            <GoodsContextState>{item.title}</GoodsContextState>
-                            <GoodsContextTitle>{item.description}</GoodsContextTitle>
-                            <GoodsContextPrice>내가 입찰한 금액 : {item.currentBidPrice}원</GoodsContextPrice>
+                            <GoodsContextState>{item?.goodsResponse.title}</GoodsContextState>
+                            <GoodsContextTitle>{item?.goodsResponse.description}</GoodsContextTitle>
+                            <GoodsContextPrice>내가 입찰한 금액 : {item?.bidAmount}원</GoodsContextPrice>
                         </GoodsContext>
-                        <ButtDiv><Butt cursor="pointer" width="auto">배송</Butt> </ButtDiv>
                         </CardInner>
                     </GoodsCard>
-                ))
-           ) : (
-               <p>경매 목록이 없습니다.</p>
+                )
            )}
-            </Inner>
             <div ref={ref} /> {/* inView Scroll 생성 위치 */}
+            {auctionList.length === 0 && <ItemEmpty/>}
+            </Inner>
         </div>
     );
 };
