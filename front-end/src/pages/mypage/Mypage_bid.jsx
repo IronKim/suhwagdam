@@ -5,8 +5,7 @@ import Butt from '../../components/Butt'
 const GoodsCard = styled.div`
     /* border: 1px solid blue; */
     width: 70%;
-    /* height: 15%; */
-    height: 120px;
+    height: 15%;
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     margin-bottom: 3%;
