@@ -17,6 +17,7 @@ import {jwtDecode} from "jwt-decode";
 import UserRoute from "./components/UserRoute";
 import Confirm from "./pages/Confirm";
 import MyPage from './pages/mypage/components/MyPage';
+import PaymentForm from './pages/PaymentForm';
 
 
 const View = () => {
@@ -61,10 +62,11 @@ const View = () => {
                     <Route path={'/list/:state'} element={<List />} />
                     <Route path={'/login'} element={<Login />} />
                     <Route path={'/join'} element={<Join />} />
-                    <Route path={'/mypage'} element={<MyPage />} />
+                    <Route path={'/mypage/:type'} element={<MyPage />} />
                     <Route path={'/goods-register'} element={<UserRoute> <Goods /> </UserRoute>} />
                     <Route path={'/goods/:goodsSeq'} element={<Detail />} />
                     <Route path={'/confirm'} element={<Confirm />} />
+                    <Route path={'/payment'} element={<PaymentForm />} />
                 </Routes>
                 <Footer />
             </BrowserRouter>
