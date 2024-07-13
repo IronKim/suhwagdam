@@ -5,7 +5,6 @@ import { getMyBidsList } from '../../api/BidApiService';
 import { getAuctionList } from '../../api/GoodsApiService';
 import { useRecoilValue } from 'recoil';
 import { useInView } from 'react-intersection-observer';
-import { getAuctionList } from '../../api/GoodsApiService';
 import ItemEmpty from '../../components/ItemEmpty';
 
 const Inner = styled.div`
