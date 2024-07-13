@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { paymentPost } from '../api/PaymentApiService';
+import { userState } from '../atoms/userState';
+import { useRecoilValue } from 'recoil';
+import { getUserData } from '../api/AuthApiService';
+import sweet from 'sweetalert2'; 
+import 'sweetalert2/dist/sweetalert2.min.css';
+import { useNavigate } from 'react-router-dom';
 
 // 스타일 컴포넌트 정의
 const FormContainer = styled.div`
@@ -31,6 +38,24 @@ const AmountButton = styled.button`
     background-color: #eee;
   }
   font-size: 20px;
+`;
+
+const PaymentMethodContainer = styled.div`
+  margin-top: 50px;
+  margin-bottom: 100px;
+`;
+
+const PaymentButton = styled.button`
+  background-color: ${props => props.selected ? '#ddd' : '#fff'};
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 40px 40px;
+  font-size: 20px;
+  margin: 5px;
+  cursor: pointer;
+  &:hover {
+    background-color: #eee;
+  }
 `;
 
 const AgreementContainer = styled.div`
@@ -84,48 +109,92 @@ const ErrorMessage = styled.div`
   margin-bottom: 10px; 
 `;
 
-const PaymentForm = () => {
-  const [selectedAmount, setSelectedAmount] = useState(null);
+  const IMP = window.IMP;
+  IMP.init('imp45140587');
+
+  const PaymentForm = () => {
+  const userData = useRecoilValue(userState);
+  const [selectedAmount, setSelectedAmount] = useState('');
+  const [selectedMethod, setSelectedMethod] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [errors, setErrors] = useState({});
+
+  const navigate = useNavigate(); // useNavigate 훅 사용
 
   const validateForm = () => {
     const newErrors = {};
 
+    if (!selectedAmount) {
+      newErrors.selectedAmount = '결제 금액을 선택해야 합니다.';
+    }
+    if (!selectedMethod) {
+      newErrors.selectedMethod = '결제 수단을 선택해야 합니다.';
+    }
     if (!termsAccepted) {
       newErrors.termsAccepted = '약관에 동의해야 합니다.';
     }
+    console.log(selectedAmount)
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; 
   };
 
   const handleSubmit = (e) => {
-      e.preventDefault();
-      if (validateForm()) {
-          // 결제 처리 코드 추가
+    e.preventDefault();
+    if (validateForm()) {
+      getUserData(userData.accountId)
+      .then(userDataResponse => {
+          const userEmail = userDataResponse.data.result.email;
+          const userNickname = userDataResponse.data.result.nickname;
+
           IMP.request_pay({
               pg: 'html5_inicis',
-              pay_method: 'card',
+              pay_method: selectedMethod === '신용카드' ? 'card' : 'kakaopay',
               merchant_uid: 'merchant_' + new Date().getTime(),
               name: selectedAmount + ' 상품 결제',
               amount: Number(selectedAmount.replace('만원', '0000')),
+              buyer_email: userEmail,
+              buyer_name: userNickname
           }, function (rsp) {
+              let msg;
               if (rsp.success) {
-                  var msg = '결제가 완료되었습니다.';
+                  msg = '결제가 완료되었습니다.';
                   msg += '고유ID : ' + rsp.imp_uid;
                   msg += '상점 거래ID : ' + rsp.merchant_uid;
                   msg += '결제 금액 : ' + rsp.paid_amount;
                   msg += '카드 승인번호 : ' + rsp.apply_num;
-              } else {
-                  var msg = '결제에 실패하였습니다.';
-                  msg += '에러내용 : ' + rsp.error_msg;
-              }
-              alert(msg);
-          });
-      }
-    };
 
+                  const paymentDto = {
+                      seq: rsp.merchant_uid,
+                      userAccountDto: { id: 'user.accountId' }, // 실제 사용자 ID를 사용하세요
+                      amount: rsp.paid_amount,
+                      createdAt: new Date().toISOString(),
+                  };
+
+                  paymentPost(paymentDto)
+                      .then(() => {
+                          console.log('포인트 결제 완료');
+                          sweet.fire('포인트 결제가 완료되었습니다.');
+                      })
+                      navigate('/mypage/paymentlist')
+
+                      .catch(err => {
+                          console.error('포인트 결제 실패:', err);
+                          sweet.fire('포인트 결제에 실패하였습니다.');
+                      });
+              } else {
+                  msg = '결제에 실패하였습니다.';
+                  msg += ' 에러내용 : ' + rsp.error_msg;
+                  alert(msg);
+              }
+          });
+      })
+      .catch(err => {
+          console.error('사용자 데이터 가져오기 실패:', err);
+          alert('사용자 데이터를 가져오는데 실패하였습니다.');
+      });
+}
+};
   return (
     <FormContainer>
       <h1>결제금액</h1>
@@ -140,6 +209,19 @@ const PaymentForm = () => {
           </AmountButton>
         ))}
       </AmountContainer>
+
+      <h2>결제수단</h2>
+      <PaymentMethodContainer>
+        {['신용카드', '카카오페이'].map(method => (
+          <PaymentButton
+            key={method}
+            selected={selectedMethod === method}
+            onClick={() => setSelectedMethod(method)}
+          >
+            {method}
+          </PaymentButton>
+        ))}
+      </PaymentMethodContainer>
 
       <form onSubmit={handleSubmit}>
         <AgreementContainer>

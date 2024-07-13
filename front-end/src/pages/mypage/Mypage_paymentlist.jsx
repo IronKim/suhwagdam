@@ -221,7 +221,7 @@ const PaymentContextPrice = styled.p`
     };
 
     return (
-        <div style={{height:'100%', display: 'flex', right: '500px'}}>
+        <div style={{height:'100%', display: 'flex', right: '500px', justifyContent: 'center'}}>
             <Inner>
                 <PointImg><img src={smile} alt='smile'/></PointImg>
                 <PointContainer>
@@ -230,7 +230,6 @@ const PaymentContextPrice = styled.p`
                     <Link to='/payment'><PointRecharge>포인트 충전</PointRecharge></Link>
                 </PointContainer>
             {paymentList.length > 0 && paymentList.slice(0, listShow).map((item, index) => (
-                
                     <PaymentCard key={index}>
                         <CardInner>
                         <PaymentPhoto><img src={coinImg} alt='coin img'></img></PaymentPhoto>

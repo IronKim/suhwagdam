@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
 import { userState } from '../../atoms/userState';
+import { getMyBidsList } from '../../api/BidApiService';
+import { getAuctionList } from '../../api/GoodsApiService';
 import { useRecoilValue } from 'recoil';
 import { useInView } from 'react-intersection-observer';
-import { getAuctionList } from '../../api/GoodsApiService';
 import ItemEmpty from '../../components/ItemEmpty';
 
 const Inner = styled.div`
@@ -95,6 +96,7 @@ const GoodsContextPrice = styled.p`
 
     useEffect(() => {
         if (accountId) {
+            
             getAuctionList(accountId)
                 .then(res => {
                     console.log('API 연결:', res.data);
@@ -103,6 +105,18 @@ const GoodsContextPrice = styled.p`
                 })
                 .catch(err => {
                     console.error('API 연결 실패:', err); 
+                });
+        }
+    }, [accountId]);
+    useEffect(() => {
+        if (accountId) {
+            
+            getMyBidsList(accountId)
+                .then((res) => {
+                    console.log('낙찰낙찰:', res.data);
+                })
+                .catch((err) => {
+                    console.error('API error:', err); 
                 });
         }
     }, [accountId]);
