@@ -86,7 +86,7 @@ const Mypage_address = () => {
     useEffect(() => {
         getAdress()
         .then(res => {
-            setAddressDTO(res.data.result);
+            setAddressDTO(res?.data.result);
             // setNewAddressDTO(res.data.result);
             // console.log('res',res);
                 })

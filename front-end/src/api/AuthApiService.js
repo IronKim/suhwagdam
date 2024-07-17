@@ -21,7 +21,7 @@ export const getUserData = (accountId) => {
     return apiClient.get(`api/v1/user-account/${accountId}`, userUpdate);
   };
 export const getSuccessBidData = (accountId) => {
-  return apiClient.get(`api/v1/user-account/${accountId}`);
+  return apiClient.get(`api/v1/address-info/${accountId}`);
   };
 export const userUpdate = (accountId, userUpdate) => {
     return apiClient.put(`api/v1/user-account/${accountId}`, userUpdate);

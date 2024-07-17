@@ -22,3 +22,10 @@ export const subscribeToBidUpdates = (goodsSeq, setBids) => {
         setBids(prevBids =>[...prevBids, newBid]);
     });
 }
+export const subscribeToSuccessBid = (setNotification) => {
+    return subscribeToTopic(`/topic/bidSuccess`, (message) => {
+        const goodsTitle = JSON.parse(message.body);
+        setNotification(`낙찰성공 ${goodsTitle}`);
+        console.log('낙찰성공데이터', goodsTitle);
+    });
+}

@@ -3,11 +3,12 @@ import styled from "styled-components";
 import Butt from '../../components/Butt'
 import { useRecoilValue} from 'recoil';
 import { userState } from '../../atoms/userState';
-import { getMyGoodsList } from '../../api/GoodsApiService';
+import { getMyGoodsList,deliveryStatus } from '../../api/GoodsApiService';
 import { getSuccessBidUser } from '../../api/BidApiService';
 import { getSuccessBidData } from '../../api/AuthApiService';
 import { useInView } from 'react-intersection-observer';
 import ItemEmpty from '../../components/ItemEmpty';
+import sweet from 'sweetalert2'; 
 
 const Inner = styled.div`
     width: 70%;
@@ -120,30 +121,57 @@ const Mypage_Goods = () => {
         prevInView.current = inView;
 
     }, [inView]);
-    
     const getSeq = ({ item }) => {
         getSuccessBidUser(item?.seq)
             .then(res => {
                 console.log(res)
-                if (res.data && res.data.resultCode === 'SUCCESS') {
-                    const accountId = res.data.result[0]?.userAccountDto?.accountId;
-                    console.log(accountId);
-                    if (accountId) {
-                        return getSuccessBidData(accountId);
-                    } else {
-                        throw new Error('User Account ID not found');
-                    }
-                } else {
-                    throw new Error('Unsuccessful response');
+                const accountId = res.data.result[0]?.userAccountDto?.accountId;
+                console.log(accountId);
+                if (accountId) {
+                    getSuccessBidData(accountId).then(res =>{
+                        sweet.fire({
+                            html: `
+                              <div><strong>이름:</strong> ${res.data.name}</div>
+                              <div><strong>전화번호:</strong> ${res.data.number}</div>
+                              <div><strong>주소:</strong> ${res.data.address}</div>
+                              <div><strong>상세주소:</strong> ${res.data.detailedAddress}</div>
+                            `,
+                            icon: "success"
+                          });
+                    }).catch(e => {
+                    })
                 }
-            })
-            .then(data => {
-                console.log('성공:', data);
             })
             .catch(error => {
                 console.error('에러:', error);
             });
     };
+    const getDeliverySeq = ({ item }) => {
+        sweet.fire({
+          title: "상품 전달 완료",
+          text: "상품 전달 완료 처리 하시겠습니까?",
+          showCancelButton: true,
+          cancelButtonColor: "#d33",
+          cancelButtonText: "취소",
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "전달 완료"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            deliveryStatus(item?.seq).then(res => {
+                sweet.fire({
+                    text: "배송완료 처리되었습니다.",
+                    icon: "success"
+                  });
+            })
+          } else {
+            sweet.fire({
+              text: "취소되었습니다.",
+              icon: "info"
+            });
+          }
+        });
+      };
+    
     return (
         <div style={{height:'100%', display: 'flex', justifyContent:'center'}}>
              <Inner>
@@ -158,13 +186,14 @@ const Mypage_Goods = () => {
                                     <GoodsContextPrice>최종 낙찰 금액: {item?.currentBidPrice} 원</GoodsContextPrice>
                                 </GoodsContext>
                                <ButtDiv><Butt fontSize="14px" onClick={() => getSeq({item})}  cursor="pointer" width="auto" disabled={item.status !== 'COMPLETE'}>배송지</Butt></ButtDiv>
-                               <ButtDiv><Butt fontSize="14px"  onClick={() => getSeq({item})}  cursor="pointer" width="auto" disabled={item.status !== 'COMPLETE' || item.deliveryStatus == 'COMPLETE'}>배송현황</Butt></ButtDiv>
+                               <ButtDiv><Butt fontSize="14px"  onClick={() => getDeliverySeq({item})}  cursor="pointer" width="auto" disabled={item.status !== 'COMPLETE' || item.deliveryStatus == 'COMPLETE'}>배송완료</Butt></ButtDiv>
                             </CardInner>
                         </GoodsCard>
                     ))
                 ) : (
                     <ItemEmpty message='등록한 상품이 없습니다.'/>
                 )}
+                
                 <div ref={ref} /> 
             </Inner>
         </div>

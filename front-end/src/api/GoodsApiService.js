@@ -8,3 +8,7 @@ export const getMyGoodsList = (accountId) => apiClient.get(`api/v1/user-account/
 export const postGoods = (goodsDTO) => {
     return apiClient.post('api/v1/goods', goodsDTO);
   };
+export const deliveryStatus = (seq) => {
+    return apiClient.post(`api/v1/goods/${seq}/updateDeliveryStatus`);
+  };
+
