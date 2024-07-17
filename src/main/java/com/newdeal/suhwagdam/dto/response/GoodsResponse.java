@@ -1,6 +1,7 @@
 package com.newdeal.suhwagdam.dto.response;
 
 import com.newdeal.suhwagdam.domain.Category;
+import com.newdeal.suhwagdam.domain.constant.DeliveryStatus;
 import com.newdeal.suhwagdam.domain.constant.GoodsStatus;
 import com.newdeal.suhwagdam.dto.GoodsDto;
 import com.newdeal.suhwagdam.dto.GoodsImageDto;
@@ -22,6 +23,7 @@ public class GoodsResponse {
     private int currentBidPrice;
     private LocalDateTime deadline;
     private GoodsStatus status;
+    private DeliveryStatus deliveryStatus;
     private List<String> images;
     private LocalDateTime createdAt;
 
@@ -36,6 +38,7 @@ public class GoodsResponse {
                 goodsDto.getCurrentBidPrice(),
                 goodsDto.getDeadline(),
                 goodsDto.getStatus(),
+                goodsDto.getDeliveryStatus(),
                 goodsDto.getImages().stream().map(GoodsImageDto::getPicture).toList(),
                 goodsDto.getCreatedAt()
         );

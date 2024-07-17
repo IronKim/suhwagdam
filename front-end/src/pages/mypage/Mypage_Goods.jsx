@@ -5,6 +5,7 @@ import { useRecoilValue} from 'recoil';
 import { userState } from '../../atoms/userState';
 import { getMyGoodsList } from '../../api/GoodsApiService';
 import { getSuccessBidUser } from '../../api/BidApiService';
+import { getSuccessBidData } from '../../api/AuthApiService';
 import { useInView } from 'react-intersection-observer';
 import ItemEmpty from '../../components/ItemEmpty';
 
@@ -120,15 +121,28 @@ const Mypage_Goods = () => {
 
     }, [inView]);
     
-    const getSeq = ({item}) => {
-            getSuccessBidUser(item?.seq)
-                .then(res => {
-                    console.log(res);
-                })
-                .catch(error => {
-                    console.error('Error delivering item:', error);
-                });
-            console.log(item?.seq)
+    const getSeq = ({ item }) => {
+        getSuccessBidUser(item?.seq)
+            .then(res => {
+                console.log(res)
+                if (res.data && res.data.resultCode === 'SUCCESS') {
+                    const accountId = res.data.result[0]?.userAccountDto?.accountId;
+                    console.log(accountId);
+                    if (accountId) {
+                        return getSuccessBidData(accountId);
+                    } else {
+                        throw new Error('User Account ID not found');
+                    }
+                } else {
+                    throw new Error('Unsuccessful response');
+                }
+            })
+            .then(data => {
+                console.log('성공:', data);
+            })
+            .catch(error => {
+                console.error('에러:', error);
+            });
     };
     return (
         <div style={{height:'100%', display: 'flex', justifyContent:'center'}}>
@@ -143,7 +157,7 @@ const Mypage_Goods = () => {
                                     <GoodsContextTitle>{item?.description}</GoodsContextTitle>
                                     <GoodsContextPrice>최종 낙찰 금액: {item?.currentBidPrice} 원</GoodsContextPrice>
                                 </GoodsContext>
-                               {/* <ButtDiv><Butt onClick={() => getSeq({item})}  cursor="pointer" width="auto" disabled={item.status !== 'COMPLETE'}>배송</Butt></ButtDiv> */}
+                               <ButtDiv><Butt onClick={() => getSeq({item})}  cursor="pointer" width="auto" disabled={item.status !== 'COMPLETE'}>배송</Butt></ButtDiv>
                             </CardInner>
                         </GoodsCard>
                     ))

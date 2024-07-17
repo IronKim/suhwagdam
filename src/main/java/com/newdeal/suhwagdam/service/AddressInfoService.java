@@ -26,7 +26,7 @@ public class AddressInfoService {
 
     public void create(AddressInfoCreateRequest request) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        UserAccount userAccount = getUserEntityException(authentication.getName());
+        UserAccount userAccount = getUserAccount(authentication.getName());
 
         Optional<AddressInfo> existingAddressInfoOptional = addressInfoRepository.findByUser(userAccount);
         
@@ -52,13 +52,18 @@ public class AddressInfoService {
     public AddressInfoDto getAddressInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        UserAccount userAccount = getUserEntityException(authentication.getName());
+        UserAccount userAccount = getUserAccount(authentication.getName());
         return AddressInfoDto.fromEntity(addressInfoRepository.findByUser(userAccount).orElseThrow(() ->
                 new SuhwagdamApplicationException(ErrorCode.ADDRESS_INFO_NOT_FOUND, "Address info not found")));
     }
 
-    private UserAccount getUserEntityException(String accountId) {
+    private UserAccount getUserAccount(String accountId) {
         return userAccountRepository.findByAccountId(accountId).orElseThrow(() ->
                 new SuhwagdamApplicationException(ErrorCode.ACCOUNT_NOT_FOUND, String.format("%s not founded", accountId)));
+    }
+    public AddressInfoDto getBidderAddress(String accountId) {
+        UserAccount userAccount = getUserAccount(accountId);
+        return AddressInfoDto.fromEntity(addressInfoRepository.findByUser(userAccount).orElseThrow(() ->
+            new SuhwagdamApplicationException(ErrorCode.ADDRESS_INFO_NOT_FOUND, "Address info not found")));
     }
 }

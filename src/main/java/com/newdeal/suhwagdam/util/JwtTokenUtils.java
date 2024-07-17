@@ -24,11 +24,12 @@ public class JwtTokenUtils {
         return Jwts.parserBuilder().setSigningKey(getKey(key)).build().parseClaimsJws(token).getBody();
     }
 
-    public static String generateToken(String accountId, String nickname, RoleType roleType, String key, long expiredTimeMs) {
+    public static String generateToken(String accountId, String nickname, RoleType roleType,int point, String key, long expiredTimeMs) {
         Claims claims = Jwts.claims();
         claims.put("accountId", accountId);
         claims.put("nickname", nickname);
         claims.put("roleType", roleType);
+        claims.put("point", point);
 
         return Jwts.builder()
                 .setClaims(claims)

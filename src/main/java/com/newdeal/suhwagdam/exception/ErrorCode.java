@@ -27,6 +27,7 @@ public enum ErrorCode {
     BIDDER_NOT_ALLOWED(HttpStatus.FORBIDDEN, "Bidder is not allowed"),
     SELLER_NOT_ALLOWED(HttpStatus.FORBIDDEN, "Seller is not allowed"),
     INSUFFICIENT_POINTS(HttpStatus.BAD_REQUEST, "Insufficient points"),
+    IMAGE_SAVE_ERROR(HttpStatus.BAD_REQUEST, "Failed to save image"),
     ;
 
     private final HttpStatus status;

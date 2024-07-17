@@ -101,6 +101,6 @@ public class AuthService {
             throw new SuhwagdamApplicationException(ErrorCode.INVALID_PASSWORD, "Password is invalid");
         }
 
-        return JwtTokenUtils.generateToken(userAccountDto.getAccountId(), userAccountDto.getNickname(), RoleType.USER, secretKey, expiredTimeMs);
+        return JwtTokenUtils.generateToken(userAccountDto.getAccountId(), userAccountDto.getNickname(), RoleType.USER, userAccountDto.getPoint(), secretKey, expiredTimeMs);
     }
 }

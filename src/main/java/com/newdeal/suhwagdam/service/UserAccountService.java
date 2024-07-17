@@ -45,7 +45,7 @@ public class UserAccountService {
         UserAccount userAccount = getUserEntityException(userAccountId);
         userAccount.update(encoder.encode(request.getPassword()), request.getEmail(), request.getNickname());
 
-        return JwtTokenUtils.generateToken(userAccount.getAccountId(), userAccount.getNickname(), RoleType.USER, secretKey, expiredTimeMs);
+        return JwtTokenUtils.generateToken(userAccount.getAccountId(), userAccount.getNickname(), RoleType.USER, userAccount.getPoint(), secretKey, expiredTimeMs);
     }
 
     public UserAccountDto getUserAccount(String userAccountId) {

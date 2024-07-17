@@ -18,4 +18,8 @@ public class WebSocketService {
     public void broadcastBidUpdate(BidResponse bidResponse) {
         messagingTemplate.convertAndSend("/topic/bid/goods/" + bidResponse.getGoodsResponse().getSeq(), bidResponse);
     }
+    
+    public void sendBidSuccess(String accountId, String message) {
+    	messagingTemplate.convertAndSendToUser(accountId, "/topic/bidSuccess", message);
+    }
 }

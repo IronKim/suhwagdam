@@ -47,8 +47,6 @@ public class BidService {
         }
         userAccount.setPoint(userPoints - bidAmount);
         userAccountRepository.save(userAccount);
-        
-        // TODO: 알림 처리
 
         goods.updateCurrentBidPrice(request.getBidAmount());
 

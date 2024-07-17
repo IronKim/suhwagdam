@@ -14,5 +14,7 @@ public interface BidRepository extends JpaRepository<Bid, Long> {
     
     Bid findTopByGoodsOrderByBidTimeDesc(Goods goods);
 
+	List<Bid> findAllByGoods(Goods goods);
+
 
 }

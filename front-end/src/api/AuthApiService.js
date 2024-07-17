@@ -20,6 +20,9 @@ export const checkEmail = (email) => {
 export const getUserData = (accountId) => {
     return apiClient.get(`api/v1/user-account/${accountId}`, userUpdate);
   };
+export const getSuccessBidData = (accountId) => {
+  return apiClient.get(`api/v1/user-account/${accountId}`);
+  };
 export const userUpdate = (accountId, userUpdate) => {
     return apiClient.put(`api/v1/user-account/${accountId}`, userUpdate);
   };

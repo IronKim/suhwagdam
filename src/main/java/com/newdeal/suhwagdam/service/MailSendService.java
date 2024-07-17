@@ -16,7 +16,7 @@ public class MailSendService {
     private final HttpServletRequest request; // TODO 서버 연결시 변경 필요
 
     public void sendEmailForCertification(String email, String certificationToken) throws MessagingException {
-        String content = String.format("http://%s/api/v1/auth/verify?certificationToken=%s&email=%s   링크를 5분 이내에 클릭해주세요.", request.getServerName(), certificationToken, email);
+        String content = String.format("http://%s:8080/api/v1/auth/verify?certificationToken=%s&email=%s   링크를 5분 이내에 클릭해주세요.", request.getServerName(), certificationToken, email);
         sendMail(email,"[수확담] 이메일 인증", content);
     }
 

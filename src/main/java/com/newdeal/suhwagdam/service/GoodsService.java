@@ -1,9 +1,21 @@
 package com.newdeal.suhwagdam.service;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
 import com.newdeal.suhwagdam.domain.Category;
 import com.newdeal.suhwagdam.domain.Goods;
 import com.newdeal.suhwagdam.domain.GoodsImage;
 import com.newdeal.suhwagdam.domain.UserAccount;
+import com.newdeal.suhwagdam.domain.constant.DeliveryStatus;
 import com.newdeal.suhwagdam.domain.constant.GoodsStatus;
 import com.newdeal.suhwagdam.dto.GoodsDto;
 import com.newdeal.suhwagdam.dto.request.GoodsCreateRequest;
@@ -12,13 +24,8 @@ import com.newdeal.suhwagdam.exception.SuhwagdamApplicationException;
 import com.newdeal.suhwagdam.repository.CategoryRepository;
 import com.newdeal.suhwagdam.repository.GoodsRepository;
 import com.newdeal.suhwagdam.repository.UserAccountRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional
@@ -27,7 +34,7 @@ public class GoodsService {
     private final UserAccountRepository userAccountRepository;
     private final GoodsRepository goodsRepository;
     private final CategoryRepository categoryRepository;
-
+    
     public GoodsDto create(GoodsCreateRequest request, String accountId) {
         UserAccount sellerAccount = getUserEntityException(accountId);
         Category category = findCategory(request.getCategoryId());
@@ -41,6 +48,7 @@ public class GoodsService {
                 .currentBidPrice(request.getStartingPrice())
                 .deadline(request.getDeadline())
                 .status(GoodsStatus.PROGRESS)
+                .deliveryStatus(DeliveryStatus.PROGRESS)
                 .images(new ArrayList<>())
                 .build());
 
@@ -82,4 +90,5 @@ public class GoodsService {
                 })
                 .collect(Collectors.toList());
     }
+
 }

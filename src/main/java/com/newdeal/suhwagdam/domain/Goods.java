@@ -1,5 +1,6 @@
 package com.newdeal.suhwagdam.domain;
 
+import com.newdeal.suhwagdam.domain.constant.DeliveryStatus;
 import com.newdeal.suhwagdam.domain.constant.GoodsStatus;
 import com.newdeal.suhwagdam.dto.GoodsDto;
 import com.newdeal.suhwagdam.exception.ErrorCode;
@@ -54,6 +55,10 @@ public class Goods {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private GoodsStatus status;
+    
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DeliveryStatus deliveryStatus;
 
     @OneToMany(mappedBy = "goods", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GoodsImage> images;

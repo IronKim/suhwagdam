@@ -2,6 +2,7 @@ package com.newdeal.suhwagdam.dto;
 
 import com.newdeal.suhwagdam.domain.Category;
 import com.newdeal.suhwagdam.domain.Goods;
+import com.newdeal.suhwagdam.domain.constant.DeliveryStatus;
 import com.newdeal.suhwagdam.domain.constant.GoodsStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class GoodsDto {
     private int currentBidPrice;
     private LocalDateTime deadline;
     private GoodsStatus status;
+    private DeliveryStatus deliveryStatus;
     private List<GoodsImageDto> images;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
@@ -39,6 +41,7 @@ public class GoodsDto {
                 goods.getCurrentBidPrice(),
                 goods.getDeadline(),
                 goods.getStatus(),
+                goods.getDeliveryStatus(),
                 goods.getImages().stream().map(GoodsImageDto::fromEntity).toList(),
                 goods.getCreatedAt(),
                 goods.getModifiedAt()
