@@ -5,7 +5,7 @@ import RelatedGoods from '../components/RelatedGoods'
 import Carousel from '../components/Carousel'
 import { Modal } from 'antd';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { useRecoilValue} from 'recoil';
+import { useRecoilValue, useSetRecoilState} from 'recoil';
 import { goodsState } from '../atoms/goodsState';
 import { userState } from '../atoms/userState';
 import { postbid } from '../../src/api/BidApiService';
@@ -278,8 +278,6 @@ const Detail = () => {
   const detailGoods = dataList.find(goods => goods.seq === Number(seq));
   const [time, setTime] = useState({ hours: 0, minutes: 0, seconds: 0 });
   const [isTimeUp, setIsTimeUp] = useState(false);
-  
-
     //포인트 들어오나 확인중
     const [userId, setUserId] = useState(user.accountId);
     const [userPoint, setUsePoint] = useState(user.accountId);
@@ -287,7 +285,6 @@ const Detail = () => {
         getUserData(userId)
         .then(res => {
           setUsePoint(res.data.result.point)
-          // console.log("겟유저포인트",res.data.result.point)
                 })
         .catch(e => {
             console.log(e);
@@ -323,13 +320,11 @@ const Detail = () => {
             setBids(response.data.result);
         })
         .catch(e => {
-            // console.error('에러:', e);
         })
     const sub = subscribeToBidUpdates(params.goodsSeq, setBids);
     return () => {
       sub.then(s => s.unsubscribe())
         .catch(e => {
-        // console.error('에러',e);
         })
     }
   }, [params.goodsSeq]);
@@ -340,9 +335,9 @@ const Detail = () => {
     bidAmount:''
   });
   const [bidAmount, setBidAmount] = useState('');
+  const setUserState = useSetRecoilState(userState); 
   const token = localStorage.getItem('suhwagdamToken') || sessionStorage.getItem('suhwagdamToken');
-// console.log('토큰:', token);
-// console.log(userId)
+
   const showModal = (seq) => {
     if(!token){
       sweet.fire({
@@ -397,6 +392,10 @@ const Detail = () => {
               text: "입찰성공",
               icon: "success"
             });
+        setUserState((pre) => ({
+          ...pre,
+          point: pre.point - price, 
+      }));
           })
     .catch(e => {
       // console.log(e)

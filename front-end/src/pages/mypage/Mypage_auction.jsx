@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
 import { userState } from '../../atoms/userState';
-import { getMyBidsList } from '../../api/BidApiService';
-import { getAuctionList } from '../../api/GoodsApiService';
 import { useRecoilValue } from 'recoil';
 import { useInView } from 'react-intersection-observer';
+import { getAuctionList } from '../../api/GoodsApiService';
 import ItemEmpty from '../../components/ItemEmpty';
+
 
 const Inner = styled.div`
     width: 70%;
@@ -90,64 +90,50 @@ const GoodsContextPrice = styled.p`
     const [auctionList, setAuctionList] = useState([]);
     const accountId = user.accountId;
 
-    const { ref, inView } = useInView({ threshold: 0.5 }); // Infinite Scroll을 위한 useRef와 useInView hook
-    const prevInView = useRef(false); // useRef를 사용하여 이전 inView 값을 기억
-    const [listShow, setListShow] = useState(8); // 한 번에 보여줄 아이템 수
-
     useEffect(() => {
         if (accountId) {
             
             getAuctionList(accountId)
                 .then(res => {
-                    console.log('API 연결:', res.data);
                     setAuctionList(res.data.result || res.data)
-                    
                 })
-                .catch(err => {
-                    console.error('API 연결 실패:', err); 
+                .catch(e => {
                 });
         }
     }, [accountId]);
-    useEffect(() => {
-        if (accountId) {
-            
-            getMyBidsList(accountId)
-                .then((res) => {
-                    console.log('낙찰낙찰:', res.data);
-                })
-                .catch((err) => {
-                    console.error('API error:', err); 
-                });
-        }
-    }, [accountId]);
-
-    useEffect(() => {
-        //nView 값 변경시 itemsShow 업데이트
-        if (inView && !prevInView.current) {
-            setListShow(prevItems => prevItems + 8);
-        }
-        prevInView.current = inView;
-
-    }, [inView]);
+    const dateTime = (dateTimeStr) => {
+        const dateTime = new Date(dateTimeStr);
+        const year = dateTime.getFullYear();
+        const month = String(dateTime.getMonth() + 1).padStart(2, '0');
+        const day = String(dateTime.getDate()).padStart(2, '0');
+        const hours = String(dateTime.getHours()).padStart(2, '0');
+        const minutes = String(dateTime.getMinutes()).padStart(2, '0');
+        const seconds = String(dateTime.getSeconds()).padStart(2, '0');
+        return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    };
 
     return (
         <div style={{height:'100%', display: 'flex', justifyContent:'center'}}>
             <Inner>
-            {auctionList.slice(0, listShow).map((item, index) => (
-                    <GoodsCard key={index}>
-                        <CardInner>
-                        <GoodsPhoto><img src={item?.goodsResponse.images} alt='auction img'></img></GoodsPhoto>
-                        <GoodsContext>
-                            <GoodsContextState>{item?.goodsResponse.title}</GoodsContextState>
-                            <GoodsContextTitle>{item?.goodsResponse.description}</GoodsContextTitle>
-                            <GoodsContextPrice>내가 입찰한 금액 : {item?.bidAmount}원</GoodsContextPrice>
-                        </GoodsContext>
-                        </CardInner>
-                    </GoodsCard>
-                )
-           )}
-            <div ref={ref} /> {/* inView Scroll 생성 위치 */}
-            {auctionList.length === 0 && <ItemEmpty/>}
+                {auctionList.length === 0 ? (
+                    <ItemEmpty message='참여한 경매 내역이 없습니다.'/>
+                ) : (
+                    auctionList.map((item, index) => (
+                        <GoodsCard key={index}>
+                            <CardInner>
+                                <GoodsPhoto>
+                                    <img src={item?.goodsResponse.images} alt='auction img' />
+                                </GoodsPhoto>
+                                <GoodsContext>
+                                    <GoodsContextState>{item?.goodsResponse.title}</GoodsContextState>
+                                    <GoodsContextTitle>{item?.goodsResponse.description}</GoodsContextTitle>
+                                    <GoodsContextPrice>입찰시간 : {dateTime(item?.bidTime)}</GoodsContextPrice>
+                                    <GoodsContextTitle>내가 입찰시도한 금액 : {item?.bidAmount}원</GoodsContextTitle>
+                                </GoodsContext>
+                            </CardInner>
+                        </GoodsCard>
+                    ))
+                )}
             </Inner>
         </div>
     );

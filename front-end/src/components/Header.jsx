@@ -134,6 +134,7 @@ const Header = () => {
     const [visible, setVisible] = useState(false);
     const [userData, setUserData] = useRecoilState(userState);
 
+    // console.log(userData)
     const navigate = useNavigate();
 
     const toggleMenu = () => {

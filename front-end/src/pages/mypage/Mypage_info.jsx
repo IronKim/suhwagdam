@@ -105,7 +105,7 @@ const Mypage_info = () => {
     useEffect(() => {
         getUserData(userData.accountId)
         .then(res => {
-            console.log('유저정보:', res.data.result)
+            // console.log('유저정보:', res.data.result)
             setUserData(res.data.result)
             setUpdate({
                 email: res.data.result.email,
@@ -130,10 +130,10 @@ const Mypage_info = () => {
         const passwordPattern = /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,20}$/;
         const nicknamePattern = /^.{2,8}$/;
 
-        if (!update.email.includes('@') || !update.email.includes('.')) {
-            sweet.fire('올바른 이메일 형식을 입력해주세요.');
-            return;
-        }
+        // if (!update.email.includes('@') || !update.email.includes('.')) {
+        //     sweet.fire('올바른 이메일 형식을 입력해주세요.');
+        //     return;
+        // }
         if (!passwordPattern.test(update.password)) {
             sweet.fire('비밀번호는 영문자와 숫자 조합으로 8~20자 이어야 합니다.');
             return;
@@ -146,7 +146,8 @@ const Mypage_info = () => {
         const updateData = {
             password: update.password,
             nickname: update.nickname,
-            point: userData.point
+            point: userData.point,
+            email: update.email
         }
 
         userUpdate(userData.accountId, updateData) //api 호출
@@ -157,7 +158,7 @@ const Mypage_info = () => {
                 const updatedUserData = {
                     ...userData,
                     nickname: update.nickname,
-                    point: res.data.result.point
+                    // point: res.data.result.point
                 };
                 setUserData(updatedUserData)
 

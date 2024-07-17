@@ -91,7 +91,7 @@ const Mypage_address = () => {
             // console.log('res',res);
                 })
         .catch(e => {
-            console.log(e);
+            // console.log(e);
         })
     }, []);
 
@@ -99,7 +99,7 @@ const Mypage_address = () => {
         form.validateFields().then(() => {
             postAdress(newAddressDTO)
             .then(res => {
-                console.log(res);
+                // console.log(res);
                 sweet.fire({
                     text: '주소등록이 완료되었습니다.',
                     icon: 'success',
@@ -107,10 +107,10 @@ const Mypage_address = () => {
                 setUpdate(false);
                 setAddressDTO(newAddressDTO);
             }).catch(e => {
-                console.log('postAdress에러',e)
+                // console.log('postAdress에러',e)
             })
         }).catch((e) => {
-            console.log(e);
+            // console.log(e);
         });
     }
     //주소api

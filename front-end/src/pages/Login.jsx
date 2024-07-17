@@ -106,12 +106,12 @@ const loginInput = (e) => {
     const loginButton = () => {
         form.validateFields().then(() => {
             if (loginDTO.accountId && loginDTO.password){
-              console.log(loginDTO)
+              // console.log(loginDTO)
                 login(loginDTO)
                   .then(res => {
-                    console.log(res.data.result.token)
-                    console.log(res)
-                    console.log(loginDTO)
+                    // console.log(res.data.result.token)
+                    // console.log(res)
+                    // console.log(loginDTO)
                     if (loginDTO.rememberMe === true) {
                         localStorage.setItem('suhwagdamToken', res.data.result.token)
                     } else {
@@ -125,7 +125,7 @@ const loginInput = (e) => {
                     })
                     navigate('/');
                   }).catch((error) => {
-                    console.error('로그인 실패', error)
+                    // console.error('로그인 실패', error)
                     sweet.fire({
                         title: "로그인 실패",
                         html: `

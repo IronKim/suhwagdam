@@ -4,7 +4,9 @@ import Butt from '../../components/Butt'
 import { useRecoilValue} from 'recoil';
 import { userState } from '../../atoms/userState';
 import { getMyGoodsList } from '../../api/GoodsApiService';
+import { getSuccessBidUser } from '../../api/BidApiService';
 import { useInView } from 'react-intersection-observer';
+import ItemEmpty from '../../components/ItemEmpty';
 
 const Inner = styled.div`
     width: 70%;
@@ -92,9 +94,8 @@ const ButtDiv = styled.div`
 ` 
 const Mypage_Goods = () => {
     const user = useRecoilValue(userState); //아톰이
-    console.log(user);
+    // console.log(user);
     const [goodsList,setGoodsList] = useState([]);
-
     const { ref, inView } = useInView({ threshold: 0.5 }); // Infinite Scroll을 위한 useRef와 useInView hook
     const prevInView = useRef(false); // useRef를 사용하여 이전 inView 값을 기억
     const [listShow, setListShow] = useState(8); // 한 번에 보여줄 아이템 수
@@ -102,11 +103,11 @@ const Mypage_Goods = () => {
       useEffect(() => {
         getMyGoodsList(user.accountId)
         .then(res => {
-            console.log(res);
+            // console.log(res);
             setGoodsList(res.data.result);
                 })
           .catch(e => {
-            console.log(e);
+            // console.log(e);
           })
       }, []);
       
@@ -118,27 +119,38 @@ const Mypage_Goods = () => {
         prevInView.current = inView;
 
     }, [inView]);
-
-
-
+    
+    const getSeq = ({item}) => {
+            getSuccessBidUser(item?.seq)
+                .then(res => {
+                    console.log(res);
+                })
+                .catch(error => {
+                    console.error('Error delivering item:', error);
+                });
+            console.log(item?.seq)
+    };
     return (
         <div style={{height:'100%', display: 'flex', justifyContent:'center'}}>
-            <Inner>
-            {goodsList?.slice(0, listShow).map((item, index) =>(
-                    <GoodsCard>
-                    <CardInner>
-                    <GoodsPhoto><img src='{item && item.images}'></img></GoodsPhoto>
-                    <GoodsContext>
-                        <GoodsContextState>{item?.title}</GoodsContextState>
-                        <GoodsContextTitle>{item?.description}</GoodsContextTitle>
-                        <GoodsContextPrice>입찰 금액 :{item?.currentBidPrice} 원</GoodsContextPrice>
-                    </GoodsContext>
-                    <ButtDiv><Butt cursor="pointer" width="auto">배송</Butt> </ButtDiv>
-                    </CardInner>
-                    </GoodsCard>
-            )
-            )}
-            <div ref={ref} /> {/* inView Scroll 생성 위치 */}
+             <Inner>
+                {goodsList.length > 0 ? (
+                    goodsList.slice(0, listShow).map((item, index) => (
+                        <GoodsCard key={index}>
+                            <CardInner>
+                                <GoodsPhoto><img src={item && item.images} alt='상품 이미지'></img></GoodsPhoto>
+                                <GoodsContext>
+                                    <GoodsContextState>{item?.title}</GoodsContextState>
+                                    <GoodsContextTitle>{item?.description}</GoodsContextTitle>
+                                    <GoodsContextPrice>최종 낙찰 금액: {item?.currentBidPrice} 원</GoodsContextPrice>
+                                </GoodsContext>
+                               {/* <ButtDiv><Butt onClick={() => getSeq({item})}  cursor="pointer" width="auto" disabled={item.status !== 'COMPLETE'}>배송</Butt></ButtDiv> */}
+                            </CardInner>
+                        </GoodsCard>
+                    ))
+                ) : (
+                    <ItemEmpty message='등록한 상품이 없습니다.'/>
+                )}
+                <div ref={ref} /> 
             </Inner>
         </div>
     );

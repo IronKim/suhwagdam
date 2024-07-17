@@ -181,12 +181,9 @@ const PaymentContextPrice = styled.p`
         if (accountId) {
             getPaymentList()
                 .then(res => {
-                    console.log('API 연결:', res.data);
                     setPaymentList(res.data.result || res.data)  
-        
                 })
                 .catch(err => {
-                    console.error('API 연결 실패:', err); 
                 });
         }
     }, [accountId]);

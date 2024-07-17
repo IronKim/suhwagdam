@@ -23,7 +23,7 @@ const ToggleDiv = styled.div`
     /* border: 1px solid red; */
     border-radius: 5px;
     width:200px;
-    height: 200px;
+    height: 240px;
     margin-top: 5%;
     font-weight: bold;
     overflow: hidden;
@@ -115,19 +115,19 @@ const Paymentlist = styled.div`
     cursor: pointer;
     }
 `
-// const Bid = styled.div`
-//     /* border: 1px solid #5AC463; */
-//     /* border-bottom: none; */
-//     height: 40px;
-//     background-color: ${({ click }) => (click ? '#5AC463' : '#FFFEF')};
-//     display : flex;
-//     justify-content : center;
-//     align-items : center;
-//     &:hover {
-//     background-color: #FFFAE3;
-//     cursor: pointer;
-//     }
-// `
+const Bid = styled.div`
+    /* border: 1px solid #5AC463; */
+    /* border-bottom: none; */
+    height: 40px;
+    background-color: ${({ click }) => (click ? '#5AC463' : '#FFFEF')};
+    display : flex;
+    justify-content : center;
+    align-items : center;
+    &:hover {
+    background-color: #FFFAE3;
+    cursor: pointer;
+    }
+`
 const HamburgerButton = styled.button`
     display: none;
     @media (max-width: 749px){
@@ -151,7 +151,7 @@ const MyPage = () => {
     const [goodsClick, setGoodsClick] = useState(false);
     const [auctionClick, setAuctionClick] = useState(false);
     const [paymentlistClick, setPaymentlistClick] = useState(false);
-    // const [bidClick, setBidClick] = useState(false);
+    const [bidClick, setBidClick] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
 
     const params = useParams();
@@ -165,43 +165,43 @@ const MyPage = () => {
             setGoodsClick(false)
             setAuctionClick(false)
             setPaymentlistClick(false)
-            // setBidClick(false)
+            setBidClick(false)
         }else if(type === 'address'){
             setAddressClick(true)
             setInfoClick(false)
             setGoodsClick(false) 
             setAuctionClick(false) 
             setPaymentlistClick(false)
-            // setBidClick(false)
+            setBidClick(false)
         }else if(type === 'goods'){
             setGoodsClick(true)
             setInfoClick(false) 
             setAddressClick(false) 
             setAuctionClick(false) 
             setPaymentlistClick(false)
-            // setBidClick(false)
+            setBidClick(false)
         }else if(type === 'auction'){
             setAuctionClick(true)
             setInfoClick(false) 
             setAddressClick(false) 
             setGoodsClick(false) 
             setPaymentlistClick(false)
-            // setBidClick(false)
+            setBidClick(false)
         }else if(type === 'paymentlist'){
             setPaymentlistClick(true)
             setInfoClick(false) 
             setAddressClick(false) 
             setGoodsClick(false) 
             setAuctionClick(false)
-            // setBidClick(true)
+            setBidClick(false)
         }
-        // else if(type === 'bid'){
-        //     setBidClick(true)
-        //     setInfoClick(false) 
-        //     setAddressClick(false) 
-        //     setGoodsClick(false) 
-        //     setAuctionClick(false)
-        // }
+        else if(type === 'bid'){
+            setBidClick(true)
+            setInfoClick(false) 
+            setAddressClick(false) 
+            setGoodsClick(false) 
+            setAuctionClick(false)
+        }
     },[params])
     
     const infoOn = () => {
@@ -210,7 +210,7 @@ const MyPage = () => {
         setGoodsClick(false)
         setAuctionClick(false)
         setPaymentlistClick(false)
-        // setBidClick(false)
+        setBidClick(false)
     }
     const addressOn = () => {
         setAddressClick(true)
@@ -218,7 +218,7 @@ const MyPage = () => {
         setGoodsClick(false)
         setAuctionClick(false)
         setPaymentlistClick(false)
-        // setBidClick(false)
+        setBidClick(false)
     }
     const goodsOn = () => {
         setGoodsClick(true)
@@ -226,7 +226,7 @@ const MyPage = () => {
         setAddressClick(false)
         setAuctionClick(false)
         setPaymentlistClick(false)
-        // setBidClick(false)
+        setBidClick(false)
     }
     const auctionOn = () => {
         setAuctionClick(true)
@@ -234,7 +234,7 @@ const MyPage = () => {
         setAddressClick(false)
         setGoodsClick(false)
         setPaymentlistClick(false)
-        // setBidClick(false)
+        setBidClick(false)
     }
     const paymentlistOn = () => {
         setPaymentlistClick(true)
@@ -242,15 +242,16 @@ const MyPage = () => {
         setInfoClick(false)
         setAddressClick(false)
         setGoodsClick(false)
-        // setBidClick(false)
+        setBidClick(false)
     }
-    // const bidOn = () => {
-    //     setBidClick(true)
-    //     setInfoClick(false)
-    //     setAddressClick(false)
-    //     setAuctionClick(false)
-    //     setGoodsClick(false)
-    // }
+    const bidOn = () => {
+        setPaymentlistClick(false)
+        setBidClick(true)
+        setInfoClick(false)
+        setAddressClick(false)
+        setAuctionClick(false)
+        setGoodsClick(false)
+    }
     const close = () => {
         setMenuOpen(false)
     }
@@ -267,7 +268,7 @@ const MyPage = () => {
                 {goodsClick && <Mypage_Goods/>}
                 {auctionClick && <Mypage_auction/>}
                 {paymentlistClick && <Mypage_paymentlist/>}
-                {/* {bidClick && <Mypage_bid/>} */}
+                {bidClick && <Mypage_bid/>}
             </Context>
             <ToggleDiv show={menuOpen}>
                 <Link to='/mypage/info' style={{textDecoration:'none', color: 'black'}}>
@@ -285,9 +286,9 @@ const MyPage = () => {
                 <Link to='/mypage/paymentlist' style={{textDecoration:'none', color: 'black'}}>
                     <Paymentlist click={paymentlistClick} onClick={paymentlistOn}>포인트 내역</Paymentlist>
                 </Link>
-                {/* <Link to='/mypage/bid' style={{textDecoration:'none', color: 'black'}}>
+                <Link to='/mypage/bid' style={{textDecoration:'none', color: 'black'}}>
                     <Bid click={bidClick} onClick={bidOn}>낙찰 내역</Bid>
-                </Link> */}
+                </Link>
             </ToggleDiv>
         </MyPageInner>
         </div>

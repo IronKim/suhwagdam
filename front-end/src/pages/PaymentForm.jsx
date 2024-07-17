@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { paymentPost } from '../api/PaymentApiService';
 import { userState } from '../atoms/userState';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { getUserData } from '../api/AuthApiService';
 import sweet from 'sweetalert2'; 
 import 'sweetalert2/dist/sweetalert2.min.css';
@@ -118,6 +118,7 @@ const ErrorMessage = styled.div`
   const [selectedMethod, setSelectedMethod] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [errors, setErrors] = useState({});
+  const setUserState = useSetRecoilState(userState); 
 
   const navigate = useNavigate(); // useNavigate 훅 사용
 
@@ -133,7 +134,7 @@ const ErrorMessage = styled.div`
     if (!termsAccepted) {
       newErrors.termsAccepted = '약관에 동의해야 합니다.';
     }
-    console.log(selectedAmount)
+    // console.log(selectedAmount)
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; 
@@ -174,6 +175,10 @@ const ErrorMessage = styled.div`
                   paymentPost(paymentDto)
                       .then(() => {
                           console.log('포인트 결제 완료');
+                          setUserState((pre) => ({
+                            ...pre,
+                            point: pre.point + paymentDto.point, 
+                        }));
                           sweet.fire('포인트 결제가 완료되었습니다.');
                       })
                       navigate('/mypage/paymentlist')
