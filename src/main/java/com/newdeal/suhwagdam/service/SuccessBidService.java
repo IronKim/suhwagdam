@@ -2,6 +2,7 @@ package com.newdeal.suhwagdam.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.scheduling.annotation.Scheduled;
@@ -19,6 +20,7 @@ import com.newdeal.suhwagdam.repository.GoodsRepository;
 import com.newdeal.suhwagdam.repository.SuccessBidRepository;
 import com.newdeal.suhwagdam.repository.UserAccountRepository;
 import com.newdeal.suhwagdam.domain.UserAccount;
+import com.newdeal.suhwagdam.domain.constant.DeliveryStatus;
 import com.newdeal.suhwagdam.domain.constant.GoodsStatus;
 import com.newdeal.suhwagdam.dto.SuccessBidDTO;
 import com.newdeal.suhwagdam.exception.ErrorCode;
@@ -85,5 +87,11 @@ public class SuccessBidService {
                  .map(SuccessBidDTO::fromEntity)
                  .collect(Collectors.toList());
     }
-    
+    public void updateDeliveryStatus(Long seq) {
+        Goods goods = goodsRepository.findById(seq)
+                .orElseThrow(() -> new SuhwagdamApplicationException(ErrorCode.GOODS_NOT_FOUND, "Goods not found with seq: " + seq));
+
+        goods.setDeliveryStatus(DeliveryStatus.COMPLETE);
+        goodsRepository.save(goods);
+    }
 }

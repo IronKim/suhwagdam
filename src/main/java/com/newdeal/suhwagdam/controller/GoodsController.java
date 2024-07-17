@@ -14,6 +14,8 @@ import com.newdeal.suhwagdam.service.SuccessBidService;
 import com.newdeal.suhwagdam.service.WebSocketService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,5 +48,11 @@ public class GoodsController {
     @GetMapping("/{seq}/bidder")
     public Response<List<SuccessBidDTO>> getBidderByGoodsSeq(@PathVariable Long seq) {
         return Response.success(successBidService.getBidderByGoodsSeq(seq));
+    }
+    
+    @PostMapping("/{seq}/updateDeliveryStatus")
+    public Response<Void> updateDeliveryStatus(@PathVariable Long seq) {
+    	successBidService.updateDeliveryStatus(seq);
+        return Response.success();
     }
 }

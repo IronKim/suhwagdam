@@ -157,7 +157,8 @@ const Mypage_Goods = () => {
                                     <GoodsContextTitle>{item?.description}</GoodsContextTitle>
                                     <GoodsContextPrice>최종 낙찰 금액: {item?.currentBidPrice} 원</GoodsContextPrice>
                                 </GoodsContext>
-                               <ButtDiv><Butt onClick={() => getSeq({item})}  cursor="pointer" width="auto" disabled={item.status !== 'COMPLETE'}>배송</Butt></ButtDiv>
+                               <ButtDiv><Butt fontSize="14px" onClick={() => getSeq({item})}  cursor="pointer" width="auto" disabled={item.status !== 'COMPLETE'}>배송지</Butt></ButtDiv>
+                               <ButtDiv><Butt fontSize="14px"  onClick={() => getSeq({item})}  cursor="pointer" width="auto" disabled={item.status !== 'COMPLETE' || item.deliveryStatus == 'COMPLETE'}>배송현황</Butt></ButtDiv>
                             </CardInner>
                         </GoodsCard>
                     ))

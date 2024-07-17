@@ -107,4 +107,8 @@ public class Goods {
 	public void setStatus(GoodsStatus complete) {
 		this.status = complete;		
 	}
+
+	public void setDeliveryStatus(DeliveryStatus complete) {
+		this.deliveryStatus = complete;		
+	}
 }
