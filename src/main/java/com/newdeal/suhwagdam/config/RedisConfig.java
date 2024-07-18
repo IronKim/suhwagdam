@@ -33,7 +33,7 @@ public class RedisConfig {
 
         // 연결 테스트
         try {
-        	log.debug("redis property: url {}:{} ", redisURI.getHost(), redisURI.getPort());
+        	log.debug("redis property: url {}:{} pw {}", redisURI.getHost(), redisURI.getPort(), redisURI.getPassword());
             factory.getConnection().ping();
         } catch (Exception e) {
             throw new RuntimeException("Redis connection failed");
