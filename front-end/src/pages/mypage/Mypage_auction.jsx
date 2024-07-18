@@ -45,7 +45,7 @@ const CardInner = styled.div`
 const GoodsPhoto = styled.div`
     /* border: 1px solid blue; */
     border-radius: 15px;
-    min-width: 110px;
+    max-width: 130px;
     height: 100%;
     overflow: hidden;
     img {
@@ -74,7 +74,7 @@ const GoodsContextTitle = styled.p`
     /* border: 1px solid orange; */
     margin:0;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 17px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

@@ -47,7 +47,7 @@ const CardInner = styled.div`
 const GoodsPhoto = styled.div`
     /* border: 1px solid blue; */
     border-radius: 15px;
-    min-width: 110px;
+    width: 130px;
     height: 100%;
     overflow: hidden;
     img {
@@ -124,9 +124,9 @@ const Mypage_Goods = () => {
     const getSeq = ({ item }) => {
         getSuccessBidUser(item?.seq)
             .then(res => {
-                console.log(res)
+                // console.log(res)
                 const accountId = res.data.result[0]?.userAccountDto?.accountId;
-                console.log(accountId);
+                // console.log(accountId);
                 if (accountId) {
                     getSuccessBidData(accountId).then(res =>{
                         sweet.fire({
@@ -139,11 +139,15 @@ const Mypage_Goods = () => {
                             icon: "success"
                           });
                     }).catch(e => {
+                        sweet.fire({
+                            text:'아직 배송지가 입력되지 않았어요',
+                            icon: "error"
+                        })
                     })
                 }
             })
             .catch(error => {
-                console.error('에러:', error);
+                
             });
     };
     const getDeliverySeq = ({ item }) => {

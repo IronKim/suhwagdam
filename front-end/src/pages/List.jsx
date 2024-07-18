@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import Card from '../components/Card';
 import styled, { keyframes } from 'styled-components';
 import { useInView } from 'react-intersection-observer';
-import { CiSearch } from 'react-icons/ci';
 import { SlClose } from 'react-icons/sl';
 import { LiaSlidersHSolid } from 'react-icons/lia';
 import { Checkbox } from 'antd';
@@ -11,6 +10,7 @@ import { goodsState } from '../atoms/goodsState';
 import { Link, useParams } from 'react-router-dom';
 import ItemEmpty from "../components/ItemEmpty";
 import { userState } from '../atoms/userState';
+import { FcPlus } from "react-icons/fc";
 
 const Container = styled.div` 
     margin: 50px auto;
@@ -80,21 +80,6 @@ const CloseIcon = styled.div`
     color: #5AC463;
   }
 `;  
-const SearchBtn = styled.button`
-    cursor: pointer;
-    border: 1px solid black;
-    background-color: #5AC463;
-    border: none;
-    color: white;
-    font-size: 20px;
-    font-weight: bold;
-    padding: 10px;
-    margin-left: 30px;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-`; 
 const slideFadeIn = keyframes`
     0% {
         opacity: 0;
@@ -214,7 +199,6 @@ const WriteBtn = styled.button`
     display: flex;
     align-items: center;
     justify-content: center;
-    right: 10px;
     border: 1px solid #5AC463;
     color: #5AC463;
     cursor: pointer;
@@ -235,6 +219,17 @@ const WriteBtn = styled.button`
         display: none;
     }
 `;
+
+const WritePlus = styled.div`
+    display: none;
+    @media (max-width: 639px) {
+        display: flex;
+        position: fixed;
+        font-size: 70px;
+        top: 88%;
+        right: 8%;
+    }   
+`
 
 const FilterContainer = styled.div`
     display: none;
@@ -397,7 +392,8 @@ const List = () => {
     const [showOneHour, setShowOneHour] = useState(false); // 마감임박 버튼 상태
 
     const userData = useRecoilValue(userState); // Recoil 상태 관리 훅을 통해 유저 데이터 상태를 가져옴
-    const hasId = userData && userData.id;
+    const hasId = userData.id;
+    console.log(hasId)
 
 
     useEffect(() => {
@@ -495,7 +491,7 @@ const List = () => {
 
     const DropContentsClick = (selectedContent) => {
         setSelectedContent(selectedContent); // 드롭다운에서 선택된 내용으로 selectedContent 업데이트
-        setDrop(false); // 드롭다운 닫기
+        setDrop(false); 
         sortAndFilterData(); // 정렬 및 필터링 함수 호출
     };
 
@@ -520,7 +516,6 @@ const List = () => {
                 <CloseIcon onClick={() => setSearch('')}>
                     <SlClose />
                 </CloseIcon>
-                <SearchBtn onClick={sortAndFilterData}><CiSearch /></SearchBtn>
             </SearchContainer>
 
             <TabBox>
@@ -545,6 +540,7 @@ const List = () => {
                 <div style={{display: 'flex', flexDirection:'row'}}>
                     <Link to='/goods-register' style={{textDecoration: 'none'}}>
                         <WriteBtn hasId={hasId}>상품 등록</WriteBtn> 
+                        <WritePlus hasId={hasId}><FcPlus /></WritePlus>
                     </Link> 
                     
                     <FilterContainer filterVis={filterVis}>     

@@ -28,9 +28,9 @@ const Inner = styled.div`
 
 const GoodsCard = styled.div`
     /* border: 1px solid blue; */
-    width: 70%;
-    /* height: 15%; */
+    width: 100%;
     height: 120px;
+    /* height: 15%; */
     border-radius: 15px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     margin-bottom: 3%;
@@ -55,7 +55,7 @@ const CardInner = styled.div`
 const GoodsPhoto = styled.div`
     /* border: 1px solid blue; */
     border-radius: 15px;
-    min-width: 110px;
+    max-width: 130px;
     height: 100%;
     overflow: hidden;
     img {

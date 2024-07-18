@@ -237,7 +237,7 @@ const Sidebar = ({ isOpen }) => {
                         <Link to='/mypage/goods' style={{textDecoration: 'none'}}><MypageMenu><p>상품 관리</p></MypageMenu></Link>
                         <Link to='/mypage/auction' style={{textDecoration: 'none'}}><MypageMenu><p>경매 내역</p></MypageMenu></Link>
                         <Link to='/mypage/paymentlist' style={{textDecoration: 'none'}}><MypageMenu><p>포인트 내역</p></MypageMenu></Link>
-                        {/* <Link to='/mypage/bid' style={{textDecoration: 'none'}}><MypageMenu><p>낙찰 내역</p></MypageMenu></Link> */}
+                        <Link to='/mypage/bid' style={{textDecoration: 'none'}}><MypageMenu><p>낙찰 내역</p></MypageMenu></Link>
                     </MypageContainer>
                 )}
         </SideContainer>
