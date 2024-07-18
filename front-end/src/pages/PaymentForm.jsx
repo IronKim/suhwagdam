@@ -177,7 +177,7 @@ const ErrorMessage = styled.div`
                           console.log('포인트 결제 완료');
                           setUserState((pre) => ({
                             ...pre,
-                            point: pre.point + paymentDto.point, 
+                            point: pre.point + paymentDto.amount, 
                         }));
                           sweet.fire('포인트 결제가 완료되었습니다.');
                       })
