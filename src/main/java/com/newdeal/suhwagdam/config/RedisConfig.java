@@ -32,6 +32,7 @@ public class RedisConfig {
         try {
             factory.getConnection().ping();
         } catch (Exception e) {
+        	System.err.println("redis property: url "+redisURI.getHost());
             throw new RuntimeException("Redis connection failed");
         }
 
