@@ -3,6 +3,8 @@ package com.newdeal.suhwagdam.config;
 import com.newdeal.suhwagdam.dto.TempUserDto;
 import io.lettuce.core.RedisURI;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,7 @@ import org.springframework.data.redis.repository.configuration.EnableRedisReposi
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+@Slf4j
 @Configuration
 @EnableRedisRepositories
 @RequiredArgsConstructor
@@ -30,9 +33,10 @@ public class RedisConfig {
 
         // 연결 테스트
         try {
+        	log.debug("redis property: url {} ", redisURI);
             factory.getConnection().ping();
         } catch (Exception e) {
-        	System.err.println("redis property: url "+redisURI.getHost());
+        	log.error("redis property: url {} ", redisURI.getHost());
             throw new RuntimeException("Redis connection failed");
         }
 
