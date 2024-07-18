@@ -70,5 +70,8 @@ spring:
     redis:
       repositories:
         enabled: false
-      url: redis://localhost:6379
+      url: jdbc:redis://localhost:6379
+      host: localhost
+      port: 6379
+      password: rootpass
 #      url: redis://sunkyoung.store:6379

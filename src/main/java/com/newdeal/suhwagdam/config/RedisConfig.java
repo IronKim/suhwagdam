@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -26,16 +27,22 @@ public class RedisConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        RedisURI redisURI = RedisURI.create(redisProperties.getUrl());
-        org.springframework.data.redis.connection.RedisConfiguration configuration = LettuceConnectionFactory.createRedisConfiguration(redisURI);
-        LettuceConnectionFactory factory = new LettuceConnectionFactory(configuration);
-        factory.afterPropertiesSet();
+//        RedisURI redisURI = RedisURI.create(redisProperties.getUrl());
+//        org.springframework.data.redis.connection.RedisConfiguration configuration = LettuceConnectionFactory.createRedisConfiguration(redisURI);
+//        LettuceConnectionFactory factory = new LettuceConnectionFactory(configuration);
+//        factory.afterPropertiesSet();
+    	RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(redisProperties.getHost(), redisProperties.getPort());
+    	config.setPassword(redisProperties.getPassword());
+    	LettuceConnectionFactory factory = new LettuceConnectionFactory(config);
 
         // 연결 테스트
         try {
-        	log.debug("redis property: url {}:{} pw {}", redisURI.getHost(), redisURI.getPort(), redisURI.getPassword());
             factory.getConnection().ping();
         } catch (Exception e) {
+        	log.error("redis property: url {}:{} pw {}", 
+        			redisProperties.getHost(), 
+        			redisProperties.getPort(), 
+        			redisProperties.getPassword());
             throw new RuntimeException("Redis connection failed");
         }
 
